@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{E36C0AD7-48EA-4F19-BEBD-609E6B9B8DF0}</ProjectGuid>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>nwn2_Chatter</RootNamespace>
+    <AssemblyName>nwn2_Chatter</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AudioConverter.cs" />
+    <Compile Include="ChatPageControl.cs" />
+    <Compile Include="Chatter.cs" />
+    <Compile Include="Chatter.Designer.cs">
+      <DependentUpon>Chatter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataZipListDialog.cs" />
+    <Compile Include="DataZipListDialog.Designer.cs">
+      <DependentUpon>DataZipListDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Infobox.cs" />
+    <Compile Include="Infobox.Designer.cs">
+      <DependentUpon>Infobox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Infobox_enum.cs" />
+    <Compile Include="Inputbox.cs" />
+    <Compile Include="Inputbox.Designer.cs">
+      <DependentUpon>Inputbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="logfile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharpZipLib_chat\ByteOrderUtil_chat.cs" />
+    <Compile Include="SharpZipLib_chat\InflatorDynamicHeader_chat.cs" />
+    <Compile Include="SharpZipLib_chat\InflatorHuffmanTree_chat.cs" />
+    <Compile Include="SharpZipLib_chat\InflatorInputBuffer_chat.cs" />
+    <Compile Include="SharpZipLib_chat\InflatorInputStream_chat.cs" />
+    <Compile Include="SharpZipLib_chat\Inflator_chat.cs" />
+    <Compile Include="SharpZipLib_chat\OutputWindow_chat.cs" />
+    <Compile Include="SharpZipLib_chat\StreamManipulator_chat.cs" />
+    <Compile Include="SharpZipLib_chat\ZipConstants_chat.cs" />
+    <Compile Include="SharpZipLib_chat\ZipEntry_chat.cs" />
+    <Compile Include="SharpZipLib_chat\ZipFile_chat.cs" />
+    <Compile Include="SoundsetFileService.cs" />
+    <Compile Include="StripRenderer.cs" />
+    <Compile Include="TabPageControl.cs" />
+    <Compile Include="TalkReader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Chatter.resx">
+      <DependentUpon>Chatter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataZipListDialog.resx">
+      <DependentUpon>DataZipListDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Infobox.resx">
+      <DependentUpon>Infobox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Inputbox.resx">
+      <DependentUpon>Inputbox.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SharpZipLib_chat" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
