@@ -281,7 +281,8 @@ namespace nwn2_Chatter
 			this.la_about.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.la_about.Margin = new System.Windows.Forms.Padding(0);
 			this.la_about.Name = "la_about";
-			this.la_about.Size = new System.Drawing.Size(35, 24);
+			this.la_about.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
+			this.la_about.Size = new System.Drawing.Size(40, 24);
 			this.la_about.Text = "about";
 			// 
 			// tc_pages
