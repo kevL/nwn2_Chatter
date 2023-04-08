@@ -449,8 +449,6 @@ namespace nwn2_Chatter
 
 					if (!_cancel)
 					{
-						//logfile.Log("WriteSoundsetFile()");
-						//logfile.Log(". pfe= " + chatter._pfe);
 						SoundsetFileService.WriteSoundsetFile(chatter);
 
 						chatter.Changed = false;
