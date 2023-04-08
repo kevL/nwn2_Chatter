@@ -287,7 +287,7 @@ namespace nwn2_Chatter
 				{
 					_lastopendirectory = Path.GetDirectoryName(ofd.FileName);
 
-					CreateChatTab(new ChatPageControl(this, ofd.FileName));
+					CreateChatterTabpage(new ChatPageControl(this, ofd.FileName));
 				}
 			}
 		}
@@ -362,7 +362,7 @@ namespace nwn2_Chatter
 								label = Path.Combine(ofd.FileName, label); // note that's the pfe of the zipfile + file.SFF
 								if (!isloaded(label))
 								{
-									CreateChatTab(new ChatPageControl(this, label, GetDecBytes(zipfile, zipentry)));
+									CreateChatterTabpage(new ChatPageControl(this, label, GetDecBytes(zipfile, zipentry)));
 								}
 							}
 						}
@@ -852,7 +852,7 @@ namespace nwn2_Chatter
 		/// current state.
 		/// </summary>
 		/// <param name="chatter"></param>
-		void CreateChatTab(ChatPageControl chatter)
+		void CreateChatterTabpage(ChatPageControl chatter)
 		{
 			if (!chatter._fail && chatter._ver != SsfFormat.non)
 			{
