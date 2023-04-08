@@ -340,7 +340,7 @@ namespace nwn2_Chatter
 										{
 											_lastplaydirectory = Path.GetDirectoryName(ofd.FileName);
 
-											string audiofile = AudioConverter.deterwave(ofd.FileName);
+											string audiofile = AudioConverter.deterwave(ofd.FileName); // this/these file/s will be deleted when Chatter closes
 											if (audiofile.Length != 0)
 											{
 												using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))

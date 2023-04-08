@@ -51,8 +51,6 @@ namespace nwn2_Chatter
 		/// </summary>
 		FileStream _fs;
 
-		string _audiofile;
-
 		/// <summary>
 		/// <c>false</c> if this <c>DataZipListDialog</c> is invoked to open a
 		/// SoundSetFile or <c>true</c> if to play/insert an audiofile.
@@ -95,7 +93,8 @@ namespace nwn2_Chatter
 				ClientSize = new Size (_w,_h);
 			}
 
-			lb_List.BackColor = Color.AliceBlue;
+			tb_Filter.BackColor = Color.BlanchedAlmond;
+			lb_List  .BackColor = Color.AliceBlue;
 
 
 			_fs = new FileStream(pfe, FileMode.Open, FileAccess.Read);
@@ -115,6 +114,7 @@ namespace nwn2_Chatter
 			Text = _zipfe = Path.GetFileName(pfe);
 
 			tb_Filter.Text = _filter;
+			bu_Cancel.Select();
 
 			_t1.Tick += t1_tick;
 			_t1.Interval = 100;
@@ -138,9 +138,6 @@ namespace nwn2_Chatter
 			_t1.Dispose();
 			_fs.Close();
 			_zipfile.Dispose();
-
-			if (File.Exists(_audiofile))
-				File.Delete(_audiofile);
 
 			base.OnFormClosing(e);
 		}
@@ -174,8 +171,8 @@ namespace nwn2_Chatter
 		void selectedindexchanged_list(object sender, EventArgs e)
 		{
 			bu_Accept.Enabled = lb_List.SelectedIndex != -1
-				&& (  (!_isaudio && GetSelectedFile().EndsWith(".ssf", StringComparison.OrdinalIgnoreCase))
-					|| (_isaudio && GetSelectedFile().EndsWith(".wav", StringComparison.OrdinalIgnoreCase)));
+							 &&  ((!_isaudio && GetSelectedFile().EndsWith(".ssf", StringComparison.OrdinalIgnoreCase))
+								|| (_isaudio && GetSelectedFile().EndsWith(".wav", StringComparison.OrdinalIgnoreCase)));
 
 			bu_Play.Enabled = lb_List.SelectedIndex != -1
 						   && GetSelectedFile().EndsWith(".wav", StringComparison.OrdinalIgnoreCase);
@@ -285,7 +282,8 @@ namespace nwn2_Chatter
 					Text = _zipfe = Path.GetFileName(ofd.FileName);
 
 					_tid = -1;
-					bu_Accept.Enabled = false;
+					bu_Accept.Enabled =
+					bu_Play  .Enabled = false;
 
 					lb_List.EndUpdate();
 				}
@@ -306,16 +304,19 @@ namespace nwn2_Chatter
 			string pfe = Path.Combine(Path.GetTempPath(), Path.GetFileName(zipentry.Label));
 			File.WriteAllBytes(pfe, bytes);
 
-			_audiofile = AudioConverter.deterwave(pfe);
-			if (_audiofile.Length != 0)
+			string audiofile = AudioConverter.deterwave(pfe); // this/these file/s will be deleted when Chatter closes
+			if (audiofile.Length != 0)
 			{
-				using (var fs = new FileStream(_audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
 				using (var player = new System.Media.SoundPlayer(fs))
 				{
-					player.SoundLocation = _audiofile;
+					player.SoundLocation = audiofile;
 					player.Play();
 				}
 			}
+
+			if (File.Exists(pfe))
+				File.Delete(pfe);
 		}
 		#endregion Handlers
 

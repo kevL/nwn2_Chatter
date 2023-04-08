@@ -13,8 +13,8 @@ namespace nwn2_Chatter
 		const string EXT_MP3 = ".mp3";
 		const string EXT_WAV = ".wav";
 
-		const string TMP_MP3 = "nwn2_Chatter" + EXT_MP3;
-		const string TMP_WAV = "nwn2_Chatter" + EXT_WAV;
+		internal const string TEMP_MP3 = "nwn2_Chatter" + EXT_MP3;
+		internal const string TEMP_WAV = "nwn2_Chatter" + EXT_WAV;
 
 		const string LAME_EXE = "lame.exe";
 		#endregion fields (static)
@@ -30,7 +30,7 @@ namespace nwn2_Chatter
 		/// <remarks>The result shall be PCM 44.1kHz 16-bit Mono.</remarks>
 		internal static string deterwave(string pfe)
 		{
-			string pathT = Path.GetTempPath();
+			string path = Path.GetTempPath();
 
 			if (   pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase) // prep .BMU ->
 				|| pfe.EndsWith(EXT_BMU, StringComparison.InvariantCultureIgnoreCase))
@@ -47,7 +47,7 @@ namespace nwn2_Chatter
 					&& chars[1] == 'M'
 					&& chars[2] == 'U')
 				{
-					string pfeT = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
+					string pfeT = Path.Combine(path, TEMP_MP3); // so label it as .MP3 and allow the next block to catch it.
 
 					File.Delete(pfeT);
 					File.Copy(pfe, pfeT);
@@ -58,7 +58,7 @@ namespace nwn2_Chatter
 
 			if (pfe.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
-				string pfeT = Path.Combine(pathT, TMP_WAV);
+				string pfeT = Path.Combine(path, TEMP_WAV);
 				File.Delete(pfeT);
 
 //				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

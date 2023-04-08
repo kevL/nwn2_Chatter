@@ -126,6 +126,17 @@ namespace nwn2_Chatter
 					}
 				}
 			}
+
+			// delete "nwn2_Chatter.mp3" and "nwn2_Chatter.wav" in the temporary
+			// directory as left by 'AudioConverter' if they exist ->
+			string path = Path.GetTempPath();
+
+			string pfe = Path.Combine(path, AudioConverter.TEMP_MP3);
+			if (File.Exists(pfe)) File.Delete(pfe);
+
+			pfe = Path.Combine(path, AudioConverter.TEMP_WAV);
+			if (File.Exists(pfe)) File.Delete(pfe);
+
 			base.OnFormClosing(e);
 		}
 
