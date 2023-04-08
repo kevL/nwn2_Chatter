@@ -368,7 +368,7 @@ namespace nwn2_Chatter
 		/// <item><c><see cref="it_file_save"/></c></item>
 		/// <item><c><see cref="it_file_saveas"/></c></item>
 		/// <item><c><see cref="it_file_close"/></c></item>
-		/// <item><c>null</c> - <c><see cref="OnKeyDown()">OnKeyDown()</see> [Ctrl+s]</c></item>
+		/// <item><c>null</c> - <c><see cref="OnKeyDown()">OnKeyDown()</see></c> <c>[Ctrl+s]</c></item>
 		/// </list></param>
 		/// <param name="e"></param>
 		/// <remarks>The it is disabled if there is no
@@ -431,7 +431,7 @@ namespace nwn2_Chatter
 						{
 							if (ib.ShowDialog(this) == DialogResult.Cancel)
 								_cancel = true;
-							else if (sender == it_file_save)
+							else if (sender != it_file_close)
 								update = true;
 						}
 					}
