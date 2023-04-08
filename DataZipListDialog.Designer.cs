@@ -59,10 +59,10 @@ namespace nwn2_Chatter
 			this.lb_List.FormattingEnabled = true;
 			this.lb_List.IntegralHeight = false;
 			this.lb_List.ItemHeight = 14;
-			this.lb_List.Location = new System.Drawing.Point(0, 21);
+			this.lb_List.Location = new System.Drawing.Point(0, 22);
 			this.lb_List.Margin = new System.Windows.Forms.Padding(0);
 			this.lb_List.Name = "lb_List";
-			this.lb_List.Size = new System.Drawing.Size(292, 377);
+			this.lb_List.Size = new System.Drawing.Size(292, 380);
 			this.lb_List.TabIndex = 2;
 			this.lb_List.SelectedIndexChanged += new System.EventHandler(this.selectedindexchanged_list);
 			this.lb_List.DoubleClick += new System.EventHandler(this.doubleclick_list);
@@ -70,7 +70,7 @@ namespace nwn2_Chatter
 			// bu_Load
 			// 
 			this.bu_Load.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.bu_Load.Location = new System.Drawing.Point(1, 402);
+			this.bu_Load.Location = new System.Drawing.Point(1, 405);
 			this.bu_Load.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Load.Name = "bu_Load";
 			this.bu_Load.Size = new System.Drawing.Size(75, 22);
@@ -84,7 +84,7 @@ namespace nwn2_Chatter
 			this.bu_Accept.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_Accept.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.bu_Accept.Enabled = false;
-			this.bu_Accept.Location = new System.Drawing.Point(139, 399);
+			this.bu_Accept.Location = new System.Drawing.Point(139, 402);
 			this.bu_Accept.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Accept.Name = "bu_Accept";
 			this.bu_Accept.Size = new System.Drawing.Size(75, 25);
@@ -96,7 +96,7 @@ namespace nwn2_Chatter
 			// 
 			this.bu_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.bu_Cancel.Location = new System.Drawing.Point(215, 399);
+			this.bu_Cancel.Location = new System.Drawing.Point(215, 402);
 			this.bu_Cancel.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Cancel.Name = "bu_Cancel";
 			this.bu_Cancel.Size = new System.Drawing.Size(75, 25);
@@ -109,7 +109,7 @@ namespace nwn2_Chatter
 			this.bu_Play.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_Play.Enabled = false;
-			this.bu_Play.Location = new System.Drawing.Point(1, 424);
+			this.bu_Play.Location = new System.Drawing.Point(1, 427);
 			this.bu_Play.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_Play.Name = "bu_Play";
 			this.bu_Play.Size = new System.Drawing.Size(289, 23);
@@ -122,7 +122,7 @@ namespace nwn2_Chatter
 			// 
 			this.AcceptButton = this.bu_Accept;
 			this.CancelButton = this.bu_Cancel;
-			this.ClientSize = new System.Drawing.Size(292, 447);
+			this.ClientSize = new System.Drawing.Size(292, 450);
 			this.Controls.Add(this.bu_Play);
 			this.Controls.Add(this.la_Filter);
 			this.Controls.Add(this.tb_Filter);
