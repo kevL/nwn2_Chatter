@@ -527,8 +527,6 @@ namespace nwn2_Chatter
 			// draw text ->
 			for (r = r_start; r != _rcount; ++r)
 			{
-//				if (r >= _resrefs.Length) break; // else this can bork-out if extend() gets called
-
 				if ((rect.Y = ROWHEIGHT * r - _scroller.Value) > Bottom)
 					break;
 
