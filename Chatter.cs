@@ -38,7 +38,7 @@ namespace nwn2_Chatter
 		/// <summary>
 		/// The array of standard voices (attack, battlecry, etc) in a
 		/// SoundSetFile. <c><see cref="Extended"/></c> files have 51 entries
-		/// while non-extended files have only 49. Generally speaking, SSF V1.0
+		/// while standard files have only 49. Generally speaking, SSF V1.0
 		/// files for NwN have 49 and SSF V1.1 files for NwN2 might have 51 if
 		/// the voice-set is for a player-companion. The 2 extra entries are
 		/// Attack1 and Attack2 at ids #49 and #50.
@@ -62,7 +62,7 @@ namespace nwn2_Chatter
 		/// <item><c><see cref="file_click_close()">file_click_close()</see></c></item>
 		/// </list>
 		/// <br/><br/>
-		/// because cancelling saving might need to cancel closing.
+		/// because cancelling the save-routine might need to cancel closing.
 		/// </summary>
 		bool _cancel;
 		#endregion Fields
