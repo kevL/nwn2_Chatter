@@ -272,8 +272,8 @@ namespace nwn2_Chatter
 			// 
 			this.it_talktable_load.Name = "it_talktable_load";
 			this.it_talktable_load.Padding = new System.Windows.Forms.Padding(0);
-			this.it_talktable_load.Size = new System.Drawing.Size(160, 20);
-			this.it_talktable_load.Text = "Load dialog.tlk ...";
+			this.it_talktable_load.Size = new System.Drawing.Size(154, 20);
+			this.it_talktable_load.Text = "Load Talkfile ...";
 			this.it_talktable_load.Click += new System.EventHandler(this.talktable_click_load);
 			// 
 			// la_about
