@@ -380,23 +380,10 @@ namespace nwn2_Chatter
 										}
 										else
 										{
-											dir = null;
-//											try{
-											using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Wow6432Node\\Obsidian\\NWN 2\\Neverwinter", false))
+											string dirT = Chatter.GetDatazipDirectory();
+											if (dirT != null)
 											{
-												if (key != null)
-												{
-													object val = key.GetValue("Path");
-													if (val != null)
-														dir = Path.Combine(val as string, "Data"); // "C:\Neverwinter Nights 2"
-												}
-											}
-//											} catch (Exception ex){
-												// react appropriately ie. fail silently ... or just throw a big bunch of gobbledigook at user's face.
-//											}
-
-											if (Directory.Exists(dir))
-											{
+												dir = dirT;
 												ofd.RestoreDirectory = true;
 											}
 											else
@@ -410,7 +397,7 @@ namespace nwn2_Chatter
 											Chatter._lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
 
 											string label = String.Empty;
-											using (var dzld = new DataZipListDialog(ofd.FileName, true))
+											using (var dzld = new DataZipListDialog(ofd.FileName, r))
 											{
 												if (dzld.ShowDialog(this) == DialogResult.OK)
 												{

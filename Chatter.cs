@@ -309,7 +309,7 @@ namespace nwn2_Chatter
 				ofd.Title  = "Open NwN2 data/zip file";
 				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
 
-				string dir = null;
+				string dir;
 				if (Directory.Exists(_lastdatadirectory))
 				{
 					dir = _lastdatadirectory;
@@ -317,24 +317,13 @@ namespace nwn2_Chatter
 				}
 				else
 				{
-					using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Wow6432Node\\Obsidian\\NWN 2\\Neverwinter", false))
+					string dirT = GetDatazipDirectory();
+					if (dirT != null)
 					{
-						if (key != null)
-						{
-							object val = key.GetValue("Path");
-							if (val != null)
-							{
-								dir = val as string; // -> "C:\Neverwinter Nights 2"
-								if (Directory.Exists(dir))
-								{
-									dir = Path.Combine(dir, "Data");
-									ofd.RestoreDirectory = true;
-								}
-							}
-						}
+						dir = dirT;
+						ofd.RestoreDirectory = true;
 					}
-
-					if (!Directory.Exists(dir))
+					else
 						dir = GetCurrentDirectory();
 				}
 
@@ -345,7 +334,7 @@ namespace nwn2_Chatter
 					_lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
 
 					string label = String.Empty;
-					using (var dzld = new DataZipListDialog(ofd.FileName, false))
+					using (var dzld = new DataZipListDialog(ofd.FileName))
 					{
 						if (dzld.ShowDialog(this) == DialogResult.OK)
 							label = dzld.GetSelectedFile();
@@ -369,6 +358,30 @@ namespace nwn2_Chatter
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		internal static string GetDatazipDirectory()
+		{
+			string dir = null;
+
+			using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Wow6432Node\\Obsidian\\NWN 2\\Neverwinter", false))
+			{
+				if (key != null)
+				{
+					object val = key.GetValue("Path");
+					if (val != null)
+					{
+						string dirT = Path.Combine(val as string, "Data");
+						if (Directory.Exists(dirT)) // -> "C:\Neverwinter Nights 2\Data"
+							dir = dirT;
+					}
+				}
+			}
+			return dir;
 		}
 
 		/// <summary>
@@ -804,8 +817,8 @@ namespace nwn2_Chatter
 			if (dir != Application.StartupPath)
 				return dir;
 
-			return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-//			return String.Empty;
+//			return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			return String.Empty;
 		}
 
 		/// <summary>

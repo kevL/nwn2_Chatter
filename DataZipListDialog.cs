@@ -71,12 +71,13 @@ namespace nwn2_Chatter
 		/// Instantiates this <c>DataZipListDialog</c>.
 		/// </summary>
 		/// <param name="pfe"></param>
-		/// <param name="isaudio"><c><see cref="_isaudio"/></c></param>
-		internal DataZipListDialog(string pfe, bool isaudio)
+		/// <param name="voiceid"></param>
+		internal DataZipListDialog(string pfe, int voiceid = -1)
 		{
-			_isaudio = isaudio;
-
 			InitializeComponent();
+
+			if (_isaudio = (voiceid != -1))
+				bu_Play.Text = Chatter.Voices[voiceid];
 
 			int wMin = bu_Load.Width + bu_Accept.Width + bu_Cancel.Width
 					 + marginhori_button_outer + marginhori_button_inner
@@ -255,6 +256,8 @@ namespace nwn2_Chatter
 
 				if (ofd.ShowDialog() == DialogResult.OK)
 				{
+					Chatter._lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
+
 					lb_List.BeginUpdate();
 
 					_filelist.Clear();
