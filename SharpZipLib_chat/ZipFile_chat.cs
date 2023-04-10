@@ -72,14 +72,14 @@ namespace nwn2_Chatter
 		/// </summary>
 		void ReadEntries()
 		{
-//			logfile.Log("ZipFile.ReadEntries()");
+			//logfile.Log("ZipFile.ReadEntries()");
 
 			// force Encoding ->
 			Encoding enc = Encoding.GetEncoding(1252); // Western European (Windows)
 //			Encoding enc = Encoding.GetEncoding(437);  // OEM United States
 			if (enc == null) enc = Encoding.GetEncoding(0); // safety.
 
-//			logfile.Log("system Enc= " + enc.EncodingName + " " + enc.CodePage);
+			//logfile.Log("system Enc= " + enc.EncodingName + " " + enc.CodePage);
 
 
 			// Search for the End Of Central Directory. When a zip comment is
@@ -117,7 +117,7 @@ namespace nwn2_Chatter
 			for (ushort i = 0; i < entriesForThisDisk; ++i)
 //			for (ulong  i = 0; i < entriesForThisDisk; ++i)
 			{
-//				logfile.Log("i= " + i);
+				//logfile.Log("i= " + i);
 
 				uint   centralHeaderSignature = _file.ReadLEUint(); // kL_note: wtf did they mismatch types - are they that stupid.
 				ushort versionMadeBy          = _file.ReadLEUshort();
@@ -223,12 +223,12 @@ namespace nwn2_Chatter
 		/// <remarks>String comparison is case insensitive.</remarks>
 		internal ZipEntry GetEntry(string label)
 		{
-//			logfile.Log("ZipFile.GetEntry() label= " + label);
+			//logfile.Log("ZipFile.GetEntry() label= " + label);
 
 			int id;
 			for (id = 0; id != _entries.Length; ++id)
 			{
-//				logfile.Log("_entries[" + id + "].Label= " + _entries[id].Label);
+				//logfile.Log("_entries[" + id + "].Label= " + _entries[id].Label);
 
 				if (_entries[id].Label.EndsWith(label, StringComparison.OrdinalIgnoreCase))
 					break;
@@ -252,7 +252,7 @@ namespace nwn2_Chatter
 		/// <c><see cref="GetEntry()">GetEntry()</see></c>.</remarks>
 		internal Stream GetInputStream(ZipEntry entry)
 		{
-//			logfile.Log("ZipFile.GetInputStream() id= " + entry.ZipFileIndex);
+			//logfile.Log("ZipFile.GetInputStream() id= " + entry.ZipFileIndex);
 
 			long start = GetEntryDataOffset(entry);
 			Stream data = new PartialInputStream(this, start, entry.CompressedSize);
@@ -274,7 +274,8 @@ namespace nwn2_Chatter
 		/// <returns>the offset of the entry's data in the file</returns>
 		long GetEntryDataOffset(ZipEntry entry)
 		{
-			logfile.Log("ZipFile.GetEntryDataOffset() _file= " + _file);
+			//logfile.Log("ZipFile.GetEntryDataOffset() _file= " + _file);
+
 			lock (_file)
 			{
 				_file.Seek(OffsetOfFirstEntry + entry.Offset, SeekOrigin.Begin);
