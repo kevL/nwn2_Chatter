@@ -365,7 +365,7 @@ namespace nwn2_Chatter
 								int r = (e.Y + _scroller.Value) / ROWHEIGHT;
 								if (r == _r && r < _resrefs.Length)
 								{
-									using (var ofd = new OpenFileDialog()) // TODO: The darn OFD registers an RMB mouseup ...
+									using (var ofd = new OpenFileDialog())
 									{
 										ofd.AutoUpgradeEnabled = false;
 
