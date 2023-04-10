@@ -95,6 +95,25 @@ namespace nwn2_Chatter
 			la_about.Text = ver;
 
 			CreateVoicesArray();
+
+
+			string pfe = Path.Combine(Application.StartupPath, "config.cfg");
+			if (File.Exists(pfe))
+			{
+				using (var sr = new StreamReader(pfe))
+				{
+					string line;
+					while ((line = sr.ReadLine()) != null)
+					{
+						if (line.StartsWith("lastdir=", StringComparison.OrdinalIgnoreCase)
+							&& (line = line.Substring(8).Trim()).Length != 0)
+						{
+							if (Directory.Exists(line))
+								Environment.CurrentDirectory = line;
+						}
+					}
+				}
+			}
 		}
 		#endregion cTor
 
@@ -136,6 +155,13 @@ namespace nwn2_Chatter
 
 			pfe = Path.Combine(path, AudioConverter.TEMP_WAV);
 			if (File.Exists(pfe)) File.Delete(pfe);
+
+
+			pfe = Path.Combine(Application.StartupPath, "config.cfg");
+			using (var sw = new StreamWriter(pfe))
+			{
+				sw.WriteLine("lastdir=" + Environment.CurrentDirectory);
+			}
 
 			base.OnFormClosing(e);
 		}
@@ -275,7 +301,7 @@ namespace nwn2_Chatter
 				if (Directory.Exists(_lastopendirectory))
 				{
 					dir = _lastopendirectory;
-					ofd.RestoreDirectory = true;
+//					ofd.RestoreDirectory = true;
 				}
 				else
 					dir = GetCurrentDirectory();
@@ -313,7 +339,7 @@ namespace nwn2_Chatter
 				if (Directory.Exists(_lastdatadirectory))
 				{
 					dir = _lastdatadirectory;
-					ofd.RestoreDirectory = true;
+//					ofd.RestoreDirectory = true;
 				}
 				else
 				{
@@ -399,9 +425,6 @@ namespace nwn2_Chatter
 		/// <c><see cref="ChatPageControl"/></c>.</remarks>
 		void file_click_save(object sender, EventArgs e)
 		{
-			//if (sender != null) logfile.Log("Chatter.file_click_save() sender= " + ((sender as ToolStripMenuItem).Name));
-			//else                logfile.Log("Chatter.file_click_save() sender NULL");
-
 			_cancel = false;
 
 			var chatter = tc_pages.SelectedTab.Tag as ChatPageControl;
@@ -509,13 +532,13 @@ namespace nwn2_Chatter
 				if (Directory.Exists(_lastsavedirectory))
 				{
 					dir = _lastsavedirectory;
-					sfd.RestoreDirectory = true;
+//					sfd.RestoreDirectory = true;
 				}
 				else if (!iscreated(chatter) && !chatter._datazipfile
 					&& Directory.Exists(Path.GetDirectoryName(chatter._pfe)))
 				{
 					dir = Path.GetDirectoryName(chatter._pfe);
-					sfd.RestoreDirectory = true;
+//					sfd.RestoreDirectory = true;
 				}
 				else
 					dir = GetCurrentDirectory();
@@ -689,7 +712,7 @@ namespace nwn2_Chatter
 				if (Directory.Exists(_lasttlkdirectory))
 				{
 					dir = _lasttlkdirectory;
-					ofd.RestoreDirectory = true;
+//					ofd.RestoreDirectory = true;
 				}
 				else
 					dir = GetCurrentDirectory();
@@ -813,7 +836,7 @@ namespace nwn2_Chatter
 		/// <c>ShowDialog()</c>.</remarks>
 		internal static string GetCurrentDirectory()
 		{
-			string dir = Directory.GetCurrentDirectory();
+			string dir = Environment.CurrentDirectory;
 			if (dir != Application.StartupPath)
 				return dir;
 
@@ -826,33 +849,23 @@ namespace nwn2_Chatter
 		/// <c>bytes</c> given a <c><see cref="ZipFile"/></c> and 
 		/// <c><see cref="ZipEntry"/></c>.
 		/// </summary>
-		/// <param name="zf"><c>ZipFile</c></param>
-		/// <param name="ze"><c>ZipEntry</c></param>
-		internal static byte[] GetDecBytes(ZipFile zf, ZipEntry ze)
+		/// <param name="zipfile"><c>ZipFile</c></param>
+		/// <param name="zipentry"><c>ZipEntry</c></param>
+		internal static byte[] GetDecBytes(ZipFile zipfile, ZipEntry zipentry)
 		{
 			byte[] bytes = null;
 
-			using (Stream s0 = zf.GetInputStream(ze))
-			using (var s1 = new MemoryStream())
+			using (Stream input = zipfile.GetInputStream(zipentry))
+			using (var output = new MemoryStream())
 			{
-				CopyStream(s0,s1);
-				bytes = s1.ToArray();
+				var buffer = new byte[4096];
+				int read;
+				while ((read = input.Read(buffer, 0, buffer.Length)) != 0)
+					output.Write(buffer, 0, read);
+
+				bytes = output.ToArray();
 			}
 			return bytes;
-		}
-
-		/// <summary>
-		/// Copies a <c>Stream</c> from <paramref name="input"/> to
-		/// <paramref name="output"/>.
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="output"></param>
-		static void CopyStream(Stream input, Stream output)
-		{
-			var buffer = new byte[4096]; //32768 or 81920
-			int read;
-			while ((read = input.Read(buffer, 0, buffer.Length)) != 0)
-				output.Write(buffer, 0, read);
 		}
 		#endregion Methods (static)
 

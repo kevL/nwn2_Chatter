@@ -247,7 +247,7 @@ namespace nwn2_Chatter
 				if (Directory.Exists(Chatter._lastdatadirectory))
 				{
 					dir = Chatter._lastdatadirectory;
-					ofd.RestoreDirectory = true;
+//					ofd.RestoreDirectory = true;
 				}
 				else
 					dir = Chatter.GetCurrentDirectory();
