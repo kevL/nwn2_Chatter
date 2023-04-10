@@ -50,6 +50,10 @@ namespace nwn2_Chatter
 		/// of course ...
 		/// </summary>
 		internal static string[] Voices;
+
+
+		const string CONFIGCFGFILE = "config.cfg";
+		const string CURRENTDIR    = "currentdir=";
 		#endregion Fields (static)
 
 
@@ -97,16 +101,16 @@ namespace nwn2_Chatter
 			CreateVoicesArray();
 
 
-			string pfe = Path.Combine(Application.StartupPath, "config.cfg");
+			string pfe = Path.Combine(Application.StartupPath, CONFIGCFGFILE);
 			if (File.Exists(pfe))
 			{
-				using (var sr = new StreamReader(pfe))
+				using (var sr = new StreamReader(pfe)) // TODO: Exception handling <-
 				{
 					string line;
 					while ((line = sr.ReadLine()) != null)
 					{
-						if (line.StartsWith("lastdir=", StringComparison.OrdinalIgnoreCase)
-							&& (line = line.Substring(8).Trim()).Length != 0)
+						if (line.StartsWith(CURRENTDIR, StringComparison.OrdinalIgnoreCase)
+							&& (line = line.Substring(CURRENTDIR.Length).Trim()).Length != 0)
 						{
 							if (Directory.Exists(line))
 								Environment.CurrentDirectory = line;
@@ -157,10 +161,10 @@ namespace nwn2_Chatter
 			if (File.Exists(pfe)) File.Delete(pfe);
 
 
-			pfe = Path.Combine(Application.StartupPath, "config.cfg");
-			using (var sw = new StreamWriter(pfe))
+			pfe = Path.Combine(Application.StartupPath, CONFIGCFGFILE);
+			using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
 			{
-				sw.WriteLine("lastdir=" + Environment.CurrentDirectory);
+				sw.WriteLine(CURRENTDIR + Environment.CurrentDirectory);
 			}
 
 			base.OnFormClosing(e);
