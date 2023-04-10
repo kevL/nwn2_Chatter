@@ -20,7 +20,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --
 kL_note: Contained in the folder SharpZipLib_chat is an extremely parsed down
-version of SharpZipLib. Its sole purpose is to read the 2da*.Zip files in the
+version of SharpZipLib. Its sole purpose is to read the .Zip files in the
 Neverwinter Nights 2\Data folder and extract specific values for display in the
 Chatter. Vast tracts of error-checking as well as functionality have been
 removed from the standard SharpZipLib codebase.
