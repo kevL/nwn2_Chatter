@@ -44,8 +44,8 @@ namespace nwn2_Chatter
 		/// </summary>
 		public void Dispose()
 		{
-			logfile.Log("ZipFile.Dispose()");
-			logfile.Log("----");
+			//logfile.Log("ZipFile.Dispose()");
+			//logfile.Log("----");
 
 			if (!_disposed)
 			{
