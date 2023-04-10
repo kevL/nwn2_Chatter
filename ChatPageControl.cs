@@ -325,12 +325,11 @@ namespace nwn2_Chatter
 										ofd.Title  = "Play WAV file";
 										ofd.Filter = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
 
+										ofd.RestoreDirectory = true; // do not track this as last location
+
 										string dir;
 										if (Directory.Exists(_lastplaydirectory))
-										{
 											dir = _lastplaydirectory;
-											ofd.RestoreDirectory = true;
-										}
 										else
 											dir = Chatter.GetCurrentDirectory();
 
@@ -369,23 +368,19 @@ namespace nwn2_Chatter
 									{
 										ofd.AutoUpgradeEnabled = false;
 
-										ofd.Title  = "Play NwN2 data/zip file";
+										ofd.Title  = "Open NwN2 data/zip file";
 										ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
+
+										ofd.RestoreDirectory = true; // do not track this as last location
 
 										string dir;
 										if (Directory.Exists(Chatter._lastdatadirectory))
-										{
 											dir = Chatter._lastdatadirectory;
-											ofd.RestoreDirectory = true;
-										}
 										else
 										{
 											string dirT = Chatter.GetDatazipDirectory();
 											if (dirT != null)
-											{
 												dir = dirT;
-												ofd.RestoreDirectory = true;
-											}
 											else
 												dir = Chatter.GetCurrentDirectory();
 										}

@@ -52,8 +52,8 @@ namespace nwn2_Chatter
 		internal static string[] Voices;
 
 
-		const string CONFIGCFGFILE = "config.cfg";
-		const string CURRENTDIR    = "currentdir=";
+		const string File_ConfigCfg = "config.cfg";
+		const string Conf_Path      = "path=";
 		#endregion Fields (static)
 
 
@@ -101,7 +101,7 @@ namespace nwn2_Chatter
 			CreateVoicesArray();
 
 
-			string pfe = Path.Combine(Application.StartupPath, CONFIGCFGFILE);
+			string pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
 			if (File.Exists(pfe))
 			{
 				using (var sr = new StreamReader(pfe)) // TODO: Exception handling <-
@@ -109,8 +109,8 @@ namespace nwn2_Chatter
 					string line;
 					while ((line = sr.ReadLine()) != null)
 					{
-						if (line.StartsWith(CURRENTDIR, StringComparison.OrdinalIgnoreCase)
-							&& (line = line.Substring(CURRENTDIR.Length).Trim()).Length != 0)
+						if (line.StartsWith(Conf_Path, StringComparison.OrdinalIgnoreCase)
+							&& (line = line.Substring(Conf_Path.Length).Trim()).Length != 0)
 						{
 							if (Directory.Exists(line))
 								Environment.CurrentDirectory = line;
@@ -161,10 +161,13 @@ namespace nwn2_Chatter
 			if (File.Exists(pfe)) File.Delete(pfe);
 
 
-			pfe = Path.Combine(Application.StartupPath, CONFIGCFGFILE);
-			using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
+			if (Environment.CurrentDirectory != Application.StartupPath)
 			{
-				sw.WriteLine(CURRENTDIR + Environment.CurrentDirectory);
+				pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
+				using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
+				{
+					sw.WriteLine(Conf_Path + Environment.CurrentDirectory);
+				}
 			}
 
 			base.OnFormClosing(e);
@@ -301,12 +304,11 @@ namespace nwn2_Chatter
 				ofd.Title  = "Open SSF file";
 				ofd.Filter = "SSF files (*.SSF)|*.SSF|All files (*.*)|*.*";
 
+//				ofd.RestoreDirectory = true; // allow tracking as last location
+
 				string dir;
 				if (Directory.Exists(_lastopendirectory))
-				{
 					dir = _lastopendirectory;
-//					ofd.RestoreDirectory = true;
-				}
 				else
 					dir = GetCurrentDirectory();
 
@@ -339,19 +341,18 @@ namespace nwn2_Chatter
 				ofd.Title  = "Open NwN2 data/zip file";
 				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
 
+//				ofd.RestoreDirectory = true; // allow tracking as last location
+
 				string dir;
 				if (Directory.Exists(_lastdatadirectory))
-				{
 					dir = _lastdatadirectory;
-//					ofd.RestoreDirectory = true;
-				}
 				else
 				{
 					string dirT = GetDatazipDirectory();
 					if (dirT != null)
 					{
 						dir = dirT;
-						ofd.RestoreDirectory = true;
+						ofd.RestoreDirectory = true; // no need to track this as last location; it's redetermined by GetDatazipDirectory()
 					}
 					else
 						dir = GetCurrentDirectory();
@@ -388,30 +389,6 @@ namespace nwn2_Chatter
 					}
 				}
 			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		internal static string GetDatazipDirectory()
-		{
-			string dir = null;
-
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Wow6432Node\\Obsidian\\NWN 2\\Neverwinter", false))
-			{
-				if (key != null)
-				{
-					object val = key.GetValue("Path");
-					if (val != null)
-					{
-						string dirT = Path.Combine(val as string, "Data");
-						if (Directory.Exists(dirT)) // -> "C:\Neverwinter Nights 2\Data"
-							dir = dirT;
-					}
-				}
-			}
-			return dir;
 		}
 
 		/// <summary>
@@ -526,23 +503,20 @@ namespace nwn2_Chatter
 				sfd.Title  = "Save as ...";
 				sfd.Filter = "SSF files (*.SSF)|*.SSF|All files (*.*)|*.*";
 
+//				sfd.RestoreDirectory = true; // allow tracking as last location
+
 				var chatter = (tc_pages.SelectedTab.Tag as ChatPageControl);
 
 				string dir, fe;
 				if (iscreated(chatter)) fe = "*.SSF";
 				else                    fe = Path.GetFileName(chatter._pfe);
 
-
 				if (Directory.Exists(_lastsavedirectory))
-				{
 					dir = _lastsavedirectory;
-//					sfd.RestoreDirectory = true;
-				}
 				else if (!iscreated(chatter) && !chatter._datazipfile
 					&& Directory.Exists(Path.GetDirectoryName(chatter._pfe)))
 				{
 					dir = Path.GetDirectoryName(chatter._pfe);
-//					sfd.RestoreDirectory = true;
 				}
 				else
 					dir = GetCurrentDirectory();
@@ -712,16 +686,15 @@ namespace nwn2_Chatter
 				ofd.Title  = "Open TLK file";
 				ofd.Filter = "TLK files (*.TLK)|*.TLK|All files (*.*)|*.*";
 
+				ofd.RestoreDirectory = true; // do not track this as last location
+
 				string dir;
 				if (Directory.Exists(_lasttlkdirectory))
-				{
 					dir = _lasttlkdirectory;
-//					ofd.RestoreDirectory = true;
-				}
 				else
 					dir = GetCurrentDirectory();
 
-				ofd.FileName = Path.Combine(dir, "*.TLK");
+				ofd.FileName = Path.Combine(dir, "dialog.TLK");
 
 				if (ofd.ShowDialog() == DialogResult.OK)
 				{
@@ -846,6 +819,31 @@ namespace nwn2_Chatter
 
 //			return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			return String.Empty;
+		}
+
+		/// <summary>
+		/// Gets the NwN2 /data directory-path from the windows Registry.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>The registry-key won't be correct on many machines.</remarks>
+		internal static string GetDatazipDirectory()
+		{
+			string dir = null;
+
+			using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Wow6432Node\\Obsidian\\NWN 2\\Neverwinter", false))
+			{
+				if (key != null)
+				{
+					object val = key.GetValue("Path");
+					if (val != null)
+					{
+						string dirT = Path.Combine(val as string, "Data");
+						if (Directory.Exists(dirT)) // -> "C:\Neverwinter Nights 2\Data"
+							dir = dirT;
+					}
+				}
+			}
+			return dir;
 		}
 
 		/// <summary>

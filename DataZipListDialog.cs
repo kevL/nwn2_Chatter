@@ -243,14 +243,22 @@ namespace nwn2_Chatter
 				ofd.Title  = "Open NwN2 data/zip file";
 				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
 
+//				ofd.RestoreDirectory = true; // allow tracking as last location
+
 				string dir;
 				if (Directory.Exists(Chatter._lastdatadirectory))
-				{
 					dir = Chatter._lastdatadirectory;
-//					ofd.RestoreDirectory = true;
-				}
 				else
-					dir = Chatter.GetCurrentDirectory();
+				{
+					string dirT = Chatter.GetDatazipDirectory();
+					if (dirT != null)
+					{
+						dir = dirT;
+						ofd.RestoreDirectory = true; // no need to track this as last location; it's redetermined by GetDatazipDirectory()
+					}
+					else
+						dir = Chatter.GetCurrentDirectory();
+				}
 
 				ofd.FileName = Path.Combine(dir, _zipfe);
 
