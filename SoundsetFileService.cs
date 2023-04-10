@@ -27,8 +27,92 @@ namespace nwn2_Chatter
 		internal static int ReadSoundsetFile(string pfe, ref string[] resrefs, ref uint[] strrefs, ref string ver)
 		{
 			if (File.Exists(pfe))
-				return ReadSoundsetFile(File.ReadAllBytes(pfe), ref resrefs, ref strrefs, ref ver);
+			{
+				byte[] bytes = null;
 
+/*				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (var br = new BinaryReader(fs))
+				{
+					bytes = br.ReadBytes((int)br.BaseStream.Length);
+				}
+//				var buffer = new byte[bytes.Length];
+//				using (var ms = new MemoryStream(bytes, 0, bytes.Length))
+//				{
+//					ms.Write(bytes, 0, bytes.Length);
+//					bytes = ms.ToArray();
+//				} */
+
+				try
+				{
+					// NOTE: File.ReadAllBytes() does *not* close the handle to the
+					// directory (in .net 3.5 at least) until Chatter is closed.
+					// Or it could have something to do with 'Environment.CurrentDirectory'
+					// ... etc.
+
+					bytes = File.ReadAllBytes(pfe);
+				}
+//				catch (ArgumentException ae)            {} // taken care of by File.Exists()
+//				catch (ArgumentNullException ane)       {} // taken care of by File.Exists()
+//				catch (PathTooLongException ptle)       {} // taken care of by File.Exists()
+//				catch (DirectoryNotFoundException dnfe) {} // taken care of by File.Exists()
+//				catch (FileNotFoundException fnfe)      {} // taken care of by File.Exists()
+//				catch (NotSupportedException nse)       {} // taken care of by File.Exists() probably
+				catch (IOException ioe)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												ioe.Message,
+												"IOException" + Environment.NewLine + ioe.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return -1;
+				}
+				catch (UnauthorizedAccessException uae)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												uae.Message,
+												"UnauthorizedAccessException" + Environment.NewLine + uae.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return -1;
+				}
+//				catch (SecurityException se) // 'SecurityException' could not be found.
+//				{}
+//				finally {}
+/*
+ArgumentException: path is a zero-length string, contains only white space, or
+contains one or more invalid characters as defined by InvalidPathChars.
+
+ArgumentNullException: path is null.
+
+PathTooLongException: The specified path, file name, or both exceed the
+system-defined maximum length. For example, on Windows-based platforms, paths
+must be less than 248 characters, and file names must be less than 260
+characters.
+
+DirectoryNotFoundException: The specified path is invalid (for example, it is on
+an unmapped drive).
+
+IOException: An I/O error occurred while opening the file.
+
+UnauthorizedAccessException: This operation is not supported on the current
+platform. -or- path specified a directory. -or- The caller does not have the
+required permission.
+
+FileNotFoundException: The file specified in path was not found.
+
+NotSupportedException: path is in an invalid format.
+
+SecurityException: The caller does not have the required permission.
+*/
+				if (bytes != null)
+					return ReadSoundsetFile(bytes, ref resrefs, ref strrefs, ref ver);
+			}
 			return -1;
 		}
 
@@ -148,95 +232,312 @@ namespace nwn2_Chatter
 		/// <c>true</c> in which case a 2080-byte file gets written.</remarks>
 		internal static void WriteSoundsetFile(ChatPageControl chatter)
 		{
-			string   pfe     = chatter._pfe;
+			string pfe = chatter._pfe; // shall not be null or 0-length
+
+			string dir = Path.GetDirectoryName(pfe);
+			if (!Directory.Exists(dir))
+			{
+				try
+				{
+					Directory.CreateDirectory(dir);
+				}
+				catch (PathTooLongException ptle) // I can't make sense of these; handle them all ->
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												ptle.Message,
+												"PathTooLongException" + Environment.NewLine + ptle.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+				catch (DirectoryNotFoundException dnfe)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												dnfe.Message,
+												"DirectoryNotFoundException" + Environment.NewLine + dnfe.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+				catch (IOException ioe)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												ioe.Message,
+												"IOException" + Environment.NewLine + ioe.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+				catch (UnauthorizedAccessException uae)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												uae.Message,
+												"UnauthorizedAccessException" + Environment.NewLine + uae.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+				catch (ArgumentNullException ane)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												ane.Message,
+												"ArgumentNullException" + Environment.NewLine + ane.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+				catch (ArgumentException ae)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												ae.Message,
+												"ArgumentException" + Environment.NewLine + ae.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+				catch (NotSupportedException nse)
+				{
+					using (var ib = new Infobox(Infobox.Title_excep,
+												nse.Message,
+												"NotSupportedException" + Environment.NewLine + nse.StackTrace,
+												InfoboxType.Error,
+												InfoboxButtons.Abort))
+					{
+						ib.ShowDialog();
+					}
+					return;
+				}
+//				finally {}
+/*
+IOException: The directory specified by path is read-only.
+
+UnauthorizedAccessException: The caller does not have the required permission.
+
+ArgumentException: path is a zero-length string, contains only white space, or
+contains one or more invalid characters as defined by InvalidPathChars. -or-
+path is prefixed with, or contains only a colon character (:).
+
+ArgumentNullException: path is null.
+
+PathTooLongException: The specified path, file name, or both exceed the
+system-defined maximum length. For example, on Windows-based platforms, paths
+must be less than 248 characters and file names must be less than 260
+characters.
+
+DirectoryNotFoundException: The specified path is invalid (for example, it is on
+an unmapped drive).
+
+NotSupportedException: path contains a colon character (:) that is not part of a
+drive label ("C:\").
+*/
+			}
+
 			string[] resrefs = chatter._resrefs;
 			uint[]   strrefs = chatter._strrefs;
 
-			using (var fs = new FileStream(pfe, FileMode.Create, FileAccess.Write, FileShare.None))
+			try
 			{
-				var bw = new BinaryWriter(fs);
-
-				string ver; int length; uint count;
-
-				if (Chatter.Output == SsfFormat.ssf10)
+				using (var fs = new FileStream(pfe, FileMode.Create, FileAccess.Write, FileShare.None))
+				if (fs != null)
+				using (var bw = new BinaryWriter(fs)) // 'ArgumentException' and 'ArgumentNullException' should be taken care of by this point <-
 				{
-					ver = Ver1;		// nwn "SSF V1.0"
-					length = 16;	// nwn 16-byte resrefs
-				}
-				else // Chatter._outputformat == SsfFormat.ssf11
-				{
-					ver = Ver2;		// nwn2 "SSF V1.1"
-					length = 32;	// nwn2 32-byte resrefs
-				}
+					string ver; int length; uint count;
 
-				if (Chatter.Extended) count = (uint)51;
-				else                  count = (uint)49;
+					if (Chatter.Output == SsfFormat.ssf10)
+					{
+						ver = Ver1;		// nwn "SSF V1.0"
+						length = 16;	// nwn 16-byte resrefs
+					}
+					else // Chatter.Output == SsfFormat.ssf11
+					{
+						ver = Ver2;		// nwn2 "SSF V1.1"
+						length = 32;	// nwn2 32-byte resrefs
+					}
 
-				bool le = BitConverter.IsLittleEndian; // hardware architecture
+					if (Chatter.Extended) count = (uint)51;
+					else                  count = (uint)49;
 
-
-				// header ->
-				byte[] bytes = Encoding.ASCII.GetBytes(ver);
-				bw.Write(bytes);
-
-
-				bytes = BitConverter.GetBytes(count);
-				if (!le) Array.Reverse(bytes);
-				bw.Write(bytes);
-
-				bytes = BitConverter.GetBytes((uint)40);
-				if (!le) Array.Reverse(bytes);
-				bw.Write(bytes);
-
-				for (int i = 0; i != 24; ++i)
-					bw.Write((byte)0);
+					bool le = BitConverter.IsLittleEndian; // hardware architecture
 
 
-				// entry table ->
-				uint offset;
-				for (uint i = 0; i != count; ++i)
-				{
-					offset = (uint)40 + count * (uint)4 + i * ((uint)length + (uint)4);
-					bytes = BitConverter.GetBytes(offset);
+					// header ->
+					byte[] bytes = Encoding.ASCII.GetBytes(ver);
+					bw.Write(bytes);
+
+
+					bytes = BitConverter.GetBytes(count);
 					if (!le) Array.Reverse(bytes);
 					bw.Write(bytes);
-				}
+
+					bytes = BitConverter.GetBytes((uint)40);
+					if (!le) Array.Reverse(bytes);
+					bw.Write(bytes);
+
+					for (int i = 0; i != 24; ++i)
+						bw.Write((byte)0);
 
 
-				// data table ->
-				for (int i = 0; i != count; ++i)
-				{
-					if (i < resrefs.Length)
+					// entry table ->
+					uint offset;
+					for (uint i = 0; i != count; ++i)
 					{
-						if (resrefs[i].Length > length) // write resref string ->
-						{
-							byte[] resref = Encoding.ASCII.GetBytes(resrefs[i]);
-							bytes = new byte[length];
-							Buffer.BlockCopy(resref, 0, bytes, 0, length);
-						}
-						else
-							bytes = Encoding.ASCII.GetBytes(resrefs[i]);
-
-						bw.Write(bytes);
-
-						for (int j = bytes.Length; j != length; ++j)
-						{
-							bw.Write((byte)0); // pad resref out to 'length'
-						}
-
-						bytes = BitConverter.GetBytes(strrefs[i]); // write strref uint ->
+						offset = (uint)40 + count * (uint)4 + i * ((uint)length + (uint)4);
+						bytes = BitConverter.GetBytes(offset);
 						if (!le) Array.Reverse(bytes);
 						bw.Write(bytes);
 					}
-					else
-					{
-						for (int j = 0; j != length; ++j) // write null resref
-							bw.Write((byte)0);
 
-						bw.Write((uint)0xFFFFFFFF); // write -1 strref
+
+					// data table ->
+					for (int i = 0; i != count; ++i)
+					{
+						if (i < resrefs.Length)
+						{
+							if (resrefs[i].Length > length) // write resref string ->
+							{
+								byte[] resref = Encoding.ASCII.GetBytes(resrefs[i]);
+								bytes = new byte[length];
+								Buffer.BlockCopy(resref, 0, bytes, 0, length);
+							}
+							else
+								bytes = Encoding.ASCII.GetBytes(resrefs[i]);
+
+							bw.Write(bytes);
+
+							for (int j = bytes.Length; j != length; ++j)
+							{
+								bw.Write((byte)0); // pad resref out to 'length'
+							}
+
+							bytes = BitConverter.GetBytes(strrefs[i]); // write strref uint ->
+							if (!le) Array.Reverse(bytes);
+							bw.Write(bytes);
+						}
+						else
+						{
+							for (int j = 0; j != length; ++j) // write null resref
+								bw.Write((byte)0);
+
+							bw.Write((uint)0xFFFFFFFF); // write -1 strref
+						}
 					}
 				}
 			}
+//			catch (ArgumentNullException ane)       {} // 'FileStream' exceptions ->
+//			catch (FileNotFoundException fnfe)      {}
+//			catch (PathTooLongException ptle)       {}
+//			catch (DirectoryNotFoundException dnfe) {} // either directory exists, was created, or 'return' above^
+			catch (ArgumentOutOfRangeException aoore)
+			{
+				using (var ib = new Infobox(Infobox.Title_excep,
+											aoore.Message,
+											"ArgumentOutOfRangeException" + Environment.NewLine + aoore.StackTrace,
+											InfoboxType.Error,
+											InfoboxButtons.Abort))
+				{
+					ib.ShowDialog();
+				}
+			}
+			catch (ArgumentException ae)
+			{
+				using (var ib = new Infobox(Infobox.Title_excep,
+											ae.Message,
+											"ArgumentException" + Environment.NewLine + ae.StackTrace,
+											InfoboxType.Error,
+											InfoboxButtons.Abort))
+				{
+					ib.ShowDialog();
+				}
+			}
+			catch (NotSupportedException nse)
+			{
+				using (var ib = new Infobox(Infobox.Title_excep,
+											nse.Message,
+											"NotSupportedException" + Environment.NewLine + nse.StackTrace,
+											InfoboxType.Error,
+											InfoboxButtons.Abort))
+				{
+					ib.ShowDialog();
+				}
+			}
+			catch (IOException ioe)
+			{
+				using (var ib = new Infobox(Infobox.Title_excep,
+											ioe.Message,
+											"IOException" + Environment.NewLine + ioe.StackTrace,
+											InfoboxType.Error,
+											InfoboxButtons.Abort))
+				{
+					ib.ShowDialog();
+				}
+			}
+			catch (UnauthorizedAccessException uae)
+			{
+				using (var ib = new Infobox(Infobox.Title_excep,
+											uae.Message,
+											"UnauthorizedAccessException" + Environment.NewLine + uae.StackTrace,
+											InfoboxType.Error,
+											InfoboxButtons.Abort))
+				{
+					ib.ShowDialog();
+				}
+			}
+//			catch (SecurityException se) // 'SecurityException' could not be found.
+//			{}
+//			finally {}
+/*
+ArgumentNullException: path is null.
+
+ArgumentException: path is an empty string (""), contains only white space, or
+contains one or more invalid characters. -or- path refers to a non-file device,
+such as "con:", "com1:", "lpt1:", etc. in an NTFS environment.
+
+NotSupportedException: path refers to a non-file device, such as "con:",
+"com1:", "lpt1:", etc. in a non-NTFS environment.
+
+FileNotFoundException: The file cannot be found, such as when mode is
+FileMode.Truncate or FileMode.Open, and the file specified by path does not
+exist. The file must already exist in these modes.
+
+IOException: An I/O error occurs, such as specifying FileMode.CreateNew and the
+file specified by path already exists. -or- The system is running Windows 98 or
+Windows 98 Second Edition and share is set to FileShare.Delete. -or- The stream
+has been closed.
+
+SecurityException: The caller does not have the required permission.
+
+DirectoryNotFoundException: The specified path is invalid, such as being on an
+unmapped drive.
+
+UnauthorizedAccessException: The access requested is not permitted by the
+operating system for the specified path, such as when access is Write or
+ReadWrite and the file or directory is set for read-only access.
+
+PathTooLongException: The specified path, file name, or both exceed the
+system-defined maximum length. For example, on Windows-based platforms, paths
+must be less than 248 characters, and file names must be less than 260
+characters.
+
+ArgumentOutOfRangeException: mode contains an invalid value.
+*/
 		}
 		#endregion Methods (static)
 	}
