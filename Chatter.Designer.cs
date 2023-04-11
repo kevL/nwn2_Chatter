@@ -31,6 +31,7 @@ namespace nwn2_Chatter
 		ToolStripMenuItem it_file;
 		ToolStripMenuItem it_file_create10;
 		ToolStripMenuItem it_file_create11;
+		ToolStripMenuItem it_file_recent;
 		ToolStripMenuItem it_file_open;
 		ToolStripMenuItem it_file_opendatazip;
 		ToolStripMenuItem it_file_save;
@@ -47,6 +48,7 @@ namespace nwn2_Chatter
 
 		ToolStripLabel la_about;
 
+		ToolStripSeparator tss_recent;
 		ToolStripSeparator tss1;
 		ToolStripSeparator tss2;
 		ToolStripSeparator tss3;
@@ -71,6 +73,8 @@ namespace nwn2_Chatter
 			this.it_file = new System.Windows.Forms.ToolStripMenuItem();
 			this.it_file_create10 = new System.Windows.Forms.ToolStripMenuItem();
 			this.it_file_create11 = new System.Windows.Forms.ToolStripMenuItem();
+			this.tss_recent = new System.Windows.Forms.ToolStripSeparator();
+			this.it_file_recent = new System.Windows.Forms.ToolStripMenuItem();
 			this.tss1 = new System.Windows.Forms.ToolStripSeparator();
 			this.it_file_open = new System.Windows.Forms.ToolStripMenuItem();
 			this.it_file_opendatazip = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,6 +123,8 @@ namespace nwn2_Chatter
 			this.it_file.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
 			this.it_file_create10,
 			this.it_file_create11,
+			this.tss_recent,
+			this.it_file_recent,
 			this.tss1,
 			this.it_file_open,
 			this.it_file_opendatazip,
@@ -148,6 +154,20 @@ namespace nwn2_Chatter
 			this.it_file_create11.Size = new System.Drawing.Size(168, 20);
 			this.it_file_create11.Text = "create SSF 1.1";
 			this.it_file_create11.Click += new System.EventHandler(this.file_click_create);
+			// 
+			// tss_recent
+			// 
+			this.tss_recent.Name = "tss_recent";
+			this.tss_recent.Size = new System.Drawing.Size(165, 6);
+			this.tss_recent.Visible = false;
+			// 
+			// it_file_recent
+			// 
+			this.it_file_recent.Name = "it_file_recent";
+			this.it_file_recent.Padding = new System.Windows.Forms.Padding(0);
+			this.it_file_recent.Size = new System.Drawing.Size(168, 20);
+			this.it_file_recent.Text = "recent files";
+			this.it_file_recent.Visible = false;
 			// 
 			// tss1
 			// 

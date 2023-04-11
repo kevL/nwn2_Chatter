@@ -54,6 +54,7 @@ namespace nwn2_Chatter
 
 		const string File_ConfigCfg = "config.cfg";
 		const string Conf_Path      = "path=";
+		const string Conf_Recent    = "recent=";
 		#endregion Fields (static)
 
 
@@ -106,6 +107,9 @@ namespace nwn2_Chatter
 			{
 				using (var sr = new StreamReader(pfe)) // TODO: Exception handling <-
 				{
+					ToolStripItem it;
+					ToolStripItemCollection recents = it_file_recent.DropDownItems;
+
 					string line;
 					while ((line = sr.ReadLine()) != null)
 					{
@@ -114,6 +118,19 @@ namespace nwn2_Chatter
 						{
 							if (Directory.Exists(line))
 								Environment.CurrentDirectory = line;
+						}
+						else if (line.StartsWith(Conf_Recent, StringComparison.OrdinalIgnoreCase)
+							&& (line = line.Substring(Conf_Recent.Length).Trim()).Length != 0)
+						{
+							if (File.Exists(line))
+							{
+								it = new ToolStripMenuItem(line);
+								it.Click += file_click_recent_it;
+								recents.Add(it);
+
+								if (recents.Count == 9)
+									break;
+							}
 						}
 					}
 				}
@@ -161,13 +178,14 @@ namespace nwn2_Chatter
 			if (File.Exists(pfe)) File.Delete(pfe);
 
 
-			if (Environment.CurrentDirectory != Application.StartupPath)
+			pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
+			using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
 			{
-				pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
-				using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
-				{
+				if (Environment.CurrentDirectory != Application.StartupPath)
 					sw.WriteLine(Conf_Path + Environment.CurrentDirectory);
-				}
+
+				foreach (ToolStripItem recent in it_file_recent.DropDownItems)
+					sw.WriteLine(Conf_Recent + recent.Text);
 			}
 
 			base.OnFormClosing(e);
@@ -252,6 +270,20 @@ namespace nwn2_Chatter
 				it_file_saveas.Enabled =
 				it_file_close .Enabled = false;
 			}
+
+			ToolStripItem it; // recent files ->
+			ToolStripItemCollection recents = it_file_recent.DropDownItems;
+			for (int i = recents.Count - 1; i != -1; --i)
+			{
+				if (!File.Exists((it = recents[i]).Text))
+				{
+					recents.Remove(it);
+					it.Dispose();
+				}
+			}
+
+			it_file_recent.Visible =
+			tss_recent    .Visible = recents.Count != 0;
 		}
 
 		/// <summary>
@@ -289,6 +321,19 @@ namespace nwn2_Chatter
 			chatter.Select();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_file_recent"/></c> subits</param>
+		/// <param name="e"></param>
+		/// <remarks>Invalid subits get deleted when the dropdown opens.</remarks>
+		void file_click_recent_it(object sender, EventArgs e)
+		{
+			string pfe = (sender as ToolStripItem).Text;
+			if (!isloaded(pfe))
+				CreateChatterTab(new ChatPageControl(this, pfe));
+		}
+
 		string _lastopendirectory;
 		/// <summary>
 		/// 
@@ -319,7 +364,39 @@ namespace nwn2_Chatter
 				{
 					_lastopendirectory = Path.GetDirectoryName(ofd.FileName);
 
-					CreateChatterTabpage(new ChatPageControl(this, ofd.FileName));
+					CreateChatterTab(new ChatPageControl(this, ofd.FileName));
+
+
+					bool found = false;
+
+					ToolStripItem it;
+					ToolStripItemCollection recents = it_file_recent.DropDownItems;
+					for (int i = 0; i != recents.Count; ++i)
+					{
+						if ((it = recents[i]).Text == ofd.FileName)
+						{
+							found = true;
+							if (i != 0)
+							{
+								recents.Remove(it);
+								recents.Insert(0, it);
+							}
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						it = new ToolStripMenuItem(ofd.FileName);
+						it.Click += file_click_recent_it;
+						recents.Insert(0, it);
+
+						if (recents.Count > 8)
+						{
+							recents.Remove(it = recents[recents.Count - 1]);
+							it.Dispose();
+						}
+					}
 				}
 			}
 		}
@@ -382,7 +459,7 @@ namespace nwn2_Chatter
 								label = Path.Combine(ofd.FileName, label); // note that's the pfe of the zipfile + file.SFF
 								if (!isloaded(label))
 								{
-									CreateChatterTabpage(new ChatPageControl(this, label, GetDecBytes(zipfile, zipentry)));
+									CreateChatterTab(new ChatPageControl(this, label, GetDecBytes(zipfile, zipentry)));
 								}
 							}
 						}
@@ -477,6 +554,38 @@ namespace nwn2_Chatter
 						SetStatusbarInfo(chatter);
 
 						if (update) chatter.extend();
+
+
+						bool found = false;
+
+						ToolStripItem it;
+						ToolStripItemCollection recents = it_file_recent.DropDownItems;
+						for (int i = 0; i != recents.Count; ++i)
+						{
+							if ((it = recents[i]).Text == chatter._pfe)
+							{
+								found = true;
+								if (i != 0)
+								{
+									recents.Remove(it);
+									recents.Insert(0, it);
+								}
+								break;
+							}
+						}
+
+						if (!found)
+						{
+							it = new ToolStripMenuItem(chatter._pfe);
+							it.Click += file_click_recent_it;
+							recents.Insert(0, it);
+
+							if (recents.Count > 8)
+							{
+								recents.Remove(it = recents[recents.Count - 1]);
+								it.Dispose();
+							}
+						}
 					}
 				}
 			}
@@ -880,7 +989,7 @@ namespace nwn2_Chatter
 		/// current state.
 		/// </summary>
 		/// <param name="chatter"></param>
-		void CreateChatterTabpage(ChatPageControl chatter)
+		void CreateChatterTab(ChatPageControl chatter)
 		{
 			if (!chatter._fail && chatter._ver != SsfFormat.non)
 			{
