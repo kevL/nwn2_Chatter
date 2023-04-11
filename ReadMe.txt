@@ -1,5 +1,5 @@
 Chatter
-1.0.3.0 - 2023 april 11
+1.0.5.0 - 2023 april 11
 kevL's
 
 SoundSetFile (SSF) editor for Neverwinter Nights 2
@@ -38,8 +38,8 @@ name inserted into the current slot.
 
 Playing audio likely works on Windows machines only.
 
-On the menu is an option to load a Talkfile - if loaded the text of the strrefs
-should appear in the table.
+On the menu is an option to load a Talkfile - if loaded the text of any strrefs
+should appear at the right of the table.
 
 Included in this Chatter package is a LAME 3.100 executable for decoding
 MPEG-audio layer 3 (MP3) to PCM-audio (WAV) playback.
