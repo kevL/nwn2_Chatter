@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
@@ -189,21 +190,41 @@ namespace nwn2_Chatter
 			if (File.Exists(pfe)) File.Delete(pfe);
 
 
-			pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
-			using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
+			var sb = new StringBuilder();
+
+			if (Environment.CurrentDirectory != Application.StartupPath)
+				sb.AppendLine(Conf_Path + Environment.CurrentDirectory);
+
+			foreach (ToolStripItem recent in it_file_recent.DropDownItems)
+				sb.AppendLine(Conf_Recent + recent.Text);
+
+			if (Directory.Exists(_lasttlkdirectory))
+				sb.AppendLine(Conf_Talkdir + _lasttlkdirectory);
+
+			if (sb.Length != 0)
 			{
-				if (Environment.CurrentDirectory != Application.StartupPath)
-					sw.WriteLine(Conf_Path + Environment.CurrentDirectory);
+				string conf = sb.ToString();
 
-				foreach (ToolStripItem recent in it_file_recent.DropDownItems)
-					sw.WriteLine(Conf_Recent + recent.Text);
-
-				if (Directory.Exists(_lasttlkdirectory))
-					sw.WriteLine(Conf_Talkdir + _lasttlkdirectory);
+				pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
+				File.WriteAllText(pfe, conf); // TODO: Exception handling <-
 			}
+
+//			pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
+//			using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
+//			{
+//				if (Environment.CurrentDirectory != Application.StartupPath)
+//					sw.WriteLine(Conf_Path + Environment.CurrentDirectory);
+//
+//				foreach (ToolStripItem recent in it_file_recent.DropDownItems)
+//					sw.WriteLine(Conf_Recent + recent.Text);
+//
+//				if (Directory.Exists(_lasttlkdirectory))
+//					sw.WriteLine(Conf_Talkdir + _lasttlkdirectory);
+//			}
 
 			base.OnFormClosing(e);
 		}
+
 
 		/// <summary>
 		/// 
