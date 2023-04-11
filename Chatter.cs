@@ -55,6 +55,7 @@ namespace nwn2_Chatter
 		const string File_ConfigCfg = "config.cfg";
 		const string Conf_Path      = "path=";
 		const string Conf_Recent    = "recent=";
+		const string Conf_Talkdir   = "talkdir=";
 		#endregion Fields (static)
 
 
@@ -113,16 +114,18 @@ namespace nwn2_Chatter
 					string line;
 					while ((line = sr.ReadLine()) != null)
 					{
-						if (line.StartsWith(Conf_Path, StringComparison.OrdinalIgnoreCase)
-							&& (line = line.Substring(Conf_Path.Length).Trim()).Length != 0)
+						if (line.StartsWith(Conf_Path, StringComparison.OrdinalIgnoreCase))
 						{
-							if (Directory.Exists(line))
+							if ((line = line.Substring(Conf_Path.Length).Trim()).Length != 0
+								&& Directory.Exists(line))
+							{
 								Environment.CurrentDirectory = line;
+							}
 						}
-						else if (line.StartsWith(Conf_Recent, StringComparison.OrdinalIgnoreCase)
-							&& (line = line.Substring(Conf_Recent.Length).Trim()).Length != 0)
+						else if (line.StartsWith(Conf_Recent, StringComparison.OrdinalIgnoreCase))
 						{
-							if (File.Exists(line))
+							if ((line = line.Substring(Conf_Recent.Length).Trim()).Length != 0
+								&& File.Exists(line))
 							{
 								it = new ToolStripMenuItem(line);
 								it.Click += file_click_recent_it;
@@ -130,6 +133,14 @@ namespace nwn2_Chatter
 
 								if (recents.Count == 9)
 									break;
+							}
+						}
+						else if (line.StartsWith(Conf_Talkdir, StringComparison.OrdinalIgnoreCase))
+						{
+							if ((line = line.Substring(Conf_Talkdir.Length).Trim()).Length != 0
+								&& Directory.Exists(line))
+							{
+								_lasttlkdirectory = line;
 							}
 						}
 					}
@@ -186,6 +197,9 @@ namespace nwn2_Chatter
 
 				foreach (ToolStripItem recent in it_file_recent.DropDownItems)
 					sw.WriteLine(Conf_Recent + recent.Text);
+
+				if (Directory.Exists(_lasttlkdirectory))
+					sw.WriteLine(Conf_Talkdir + _lasttlkdirectory);
 			}
 
 			base.OnFormClosing(e);
