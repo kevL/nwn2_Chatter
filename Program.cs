@@ -20,7 +20,7 @@ namespace nwn2_Chatter
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			Application.Run(new Chatter());
+			Application.Run(new Chatter(args));
 		}
 	}
 }

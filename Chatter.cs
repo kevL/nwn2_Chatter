@@ -79,7 +79,8 @@ namespace nwn2_Chatter
 		/// <summary>
 		/// cTor.
 		/// </summary>
-		internal Chatter()
+		/// <param name="args"></param>
+		internal Chatter(string[] args)
 		{
 			InitializeComponent();
 			InitializeObstructor();
@@ -146,6 +147,12 @@ namespace nwn2_Chatter
 						}
 					}
 				}
+			}
+
+			if (args.Length == 1 && File.Exists(pfe = args[0]) && !isloaded(pfe))
+			{
+				CreateChatterTab(new ChatPageControl(this, pfe));
+				UpdateRecents(pfe);
 			}
 		}
 		#endregion cTor
