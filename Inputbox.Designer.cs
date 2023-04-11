@@ -29,6 +29,7 @@ namespace nwn2_Chatter
 			this.ClientSize = new System.Drawing.Size(242, 39);
 			this.Controls.Add(this.tb_input);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Icon = global::nwn2_Chatter.Properties.Resource1.chatter_icon;
 			this.KeyPreview = true;
 			this.MaximizeBox = false;
 			this.Name = "Inputbox";

@@ -373,6 +373,7 @@ namespace nwn2_Chatter
 			this.Controls.Add(this.menubar);
 			this.Controls.Add(this.ss_bot);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Icon = global::nwn2_Chatter.Properties.Resource1.chatter_icon;
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menubar;
 			this.Name = "Chatter";
