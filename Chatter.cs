@@ -209,19 +209,6 @@ namespace nwn2_Chatter
 				File.WriteAllText(pfe, conf); // TODO: Exception handling <-
 			}
 
-//			pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
-//			using (var sw = new StreamWriter(pfe)) // TODO: Exception handling <-
-//			{
-//				if (Environment.CurrentDirectory != Application.StartupPath)
-//					sw.WriteLine(Conf_Path + Environment.CurrentDirectory);
-//
-//				foreach (ToolStripItem recent in it_file_recent.DropDownItems)
-//					sw.WriteLine(Conf_Recent + recent.Text);
-//
-//				if (Directory.Exists(_lasttlkdirectory))
-//					sw.WriteLine(Conf_Talkdir + _lasttlkdirectory);
-//			}
-
 			base.OnFormClosing(e);
 		}
 
