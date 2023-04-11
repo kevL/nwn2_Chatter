@@ -57,6 +57,7 @@
     <Compile Include="Chatter.Designer.cs">
       <DependentUpon>Chatter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Crap.cs" />
     <Compile Include="DataZipListDialog.cs" />
     <Compile Include="DataZipListDialog.Designer.cs">
       <DependentUpon>DataZipListDialog.cs</DependentUpon>

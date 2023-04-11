@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -72,6 +73,12 @@ namespace nwn2_Chatter
 		/// because cancelling the save-routine might need to cancel closing.
 		/// </summary>
 		bool _cancel;
+
+		/// <summary>
+		/// Brings this <c>Chatter</c> to the top of the z-axis on the desktop
+		/// after a double-click in FileExplorer loads a file. Stops tick.
+		/// </summary>
+		Timer _t1 = new Timer();
 		#endregion Fields
 
 
@@ -103,6 +110,9 @@ namespace nwn2_Chatter
 			la_about.Text = ver;
 
 			CreateVoicesArray();
+
+			_t1.Interval = SystemInformation.DoubleClickTime + 15;
+			_t1.Tick += tick_t1;
 
 
 			string pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
@@ -156,6 +166,79 @@ namespace nwn2_Chatter
 			}
 		}
 		#endregion cTor
+
+
+		#region Handlers (override - Receive Message - load arg)
+		/// <summary>
+		/// Disables message-blocking in Vista+ 64-bit systems.
+		/// </summary>
+		/// <param name="e"></param>
+		/// <remarks>https://www.codeproject.com/Tips/1017834/How-to-Send-Data-from-One-Process-to-Another-in-Cs</remarks>
+		protected override void OnLoad(EventArgs e)
+		{
+			GC.Collect(); // .net appears to load garbage at program start.
+			GC.WaitForPendingFinalizers();
+
+			var filter = new Crap.CHANGEFILTERSTRUCT();
+			filter.size = (uint)Marshal.SizeOf(filter);
+			filter.info = 0;
+			if (!Crap.ChangeWindowMessageFilterEx(Handle,
+												  Crap.WM_COPYDATA,
+												  Crap.ChangeWindowMessageFilterExAction.Allow,
+												  ref filter))
+			{
+				using (var ib = new Infobox(Infobox.Title_error,
+											"The MessageFilter could not be changed.",
+											"LastWin32Error " + Marshal.GetLastWin32Error(),
+											InfoboxType.Error))
+				{
+					ib.ShowDialog(this);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Receives data via WM_COPYDATA from other applications/processes.
+		/// </summary>
+		/// <param name="m"></param>
+		/// <remarks>https://www.codeproject.com/Tips/1017834/How-to-Send-Data-from-One-Process-to-Another-in-Cs</remarks>
+		protected override void WndProc(ref Message m)
+		{
+			if (m.Msg == Crap.WM_COPYDATA)
+			{
+				var copyData = (Crap.COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof(Crap.COPYDATASTRUCT));
+				if ((int)copyData.dwData == Crap.CopyDataStructType) // extract the file-string ->
+				{
+					string arg0 = Marshal.PtrToStringAnsi(copyData.lpData);
+					if (File.Exists(arg0))
+					{
+						if (!isloaded(arg0))
+						{
+							CreateChatterTab(new ChatPageControl(this, arg0)); // load file per file-association
+							UpdateRecents(arg0);
+						}
+						_t1.Start();
+					}
+				}
+			}
+			else
+				base.WndProc(ref m);
+		}
+
+		/// <summary>
+		/// Brings this <c>Chatter</c> to the top of the z-axis on the desktop
+		/// after double-clicking a file in FileExplorer. Stops tick.
+		/// </summary>
+		/// <param name="sender"><c><see cref="_t1"/></c></param>
+		/// <param name="e"></param>
+		void tick_t1(object sender, EventArgs e)
+		{
+			_t1.Stop();
+
+			TopMost = true;
+			TopMost = false;
+		}
+		#endregion Handlers (override - Receive Message - load arg)
 
 
 		#region Handlers (override)
