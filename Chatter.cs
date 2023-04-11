@@ -365,38 +365,7 @@ namespace nwn2_Chatter
 					_lastopendirectory = Path.GetDirectoryName(ofd.FileName);
 
 					CreateChatterTab(new ChatPageControl(this, ofd.FileName));
-
-
-					bool found = false;
-
-					ToolStripItem it;
-					ToolStripItemCollection recents = it_file_recent.DropDownItems;
-					for (int i = 0; i != recents.Count; ++i)
-					{
-						if ((it = recents[i]).Text == ofd.FileName)
-						{
-							found = true;
-							if (i != 0)
-							{
-								recents.Remove(it);
-								recents.Insert(0, it);
-							}
-							break;
-						}
-					}
-
-					if (!found)
-					{
-						it = new ToolStripMenuItem(ofd.FileName);
-						it.Click += file_click_recent_it;
-						recents.Insert(0, it);
-
-						if (recents.Count > 8)
-						{
-							recents.Remove(it = recents[recents.Count - 1]);
-							it.Dispose();
-						}
-					}
+					UpdateRecents(ofd.FileName);
 				}
 			}
 		}
@@ -518,7 +487,7 @@ namespace nwn2_Chatter
 
 				if (!_cancel)
 				{
-					bool update = false;
+					bool extendedchanged = false;
 
 					if (chatter._extended != Extended)
 					{
@@ -537,7 +506,7 @@ namespace nwn2_Chatter
 							if (ib.ShowDialog(this) == DialogResult.Cancel)
 								_cancel = true;
 							else if (sender != it_file_close)
-								update = true;
+								extendedchanged = true;
 						}
 					}
 
@@ -553,39 +522,9 @@ namespace nwn2_Chatter
 						SetTitle();
 						SetStatusbarInfo(chatter);
 
-						if (update) chatter.extend();
+						if (extendedchanged) chatter.ChangedExtended();
 
-
-						bool found = false;
-
-						ToolStripItem it;
-						ToolStripItemCollection recents = it_file_recent.DropDownItems;
-						for (int i = 0; i != recents.Count; ++i)
-						{
-							if ((it = recents[i]).Text == chatter._pfe)
-							{
-								found = true;
-								if (i != 0)
-								{
-									recents.Remove(it);
-									recents.Insert(0, it);
-								}
-								break;
-							}
-						}
-
-						if (!found)
-						{
-							it = new ToolStripMenuItem(chatter._pfe);
-							it.Click += file_click_recent_it;
-							recents.Insert(0, it);
-
-							if (recents.Count > 8)
-							{
-								recents.Remove(it = recents[recents.Count - 1]);
-								it.Dispose();
-							}
-						}
+						UpdateRecents(chatter._pfe);
 					}
 				}
 			}
@@ -1156,6 +1095,44 @@ namespace nwn2_Chatter
 				}
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Updates the recently opened files list.
+		/// </summary>
+		/// <param name="pfe"></param>
+		void UpdateRecents(string pfe)
+		{
+			bool found = false;
+
+			ToolStripItem it;
+			ToolStripItemCollection recents = it_file_recent.DropDownItems;
+			for (int i = 0; i != recents.Count; ++i)
+			{
+				if ((it = recents[i]).Text == pfe)
+				{
+					found = true;
+					if (i != 0)
+					{
+						recents.Remove(it);
+						recents.Insert(0, it);
+					}
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				it = new ToolStripMenuItem(pfe);
+				it.Click += file_click_recent_it;
+				recents.Insert(0, it);
+
+				if (recents.Count > 8)
+				{
+					recents.Remove(it = recents[recents.Count - 1]);
+					it.Dispose();
+				}
+			}
 		}
 		#endregion Methods
 	}

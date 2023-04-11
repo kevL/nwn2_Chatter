@@ -661,7 +661,7 @@ namespace nwn2_Chatter
 		/// Updates this <c>ChatPageControl</c> if the
 		/// <c><see cref="_extended"/></c> flag changes.
 		/// </summary>
-		internal void extend()
+		internal void ChangedExtended()
 		{
 			if (_extended) _rcount = 51;
 			else           _rcount = 49;
