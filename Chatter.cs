@@ -714,7 +714,7 @@ namespace nwn2_Chatter
 			if (ischanged(chatter))
 			{
 				using (var ib = new Infobox(Infobox.Title_alert,
-											"The data has changed. Do you wish to save the file ...",
+											"The data has changed. Do you want to save the file ...",
 											null,
 											InfoboxType.Warn,
 											InfoboxButtons.CancelYesNo))
