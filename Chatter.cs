@@ -1049,7 +1049,7 @@ namespace nwn2_Chatter
 		/// <param name="chatter"></param>
 		void CreateChatterTab(ChatPageControl chatter)
 		{
-			if (!chatter._fail && chatter._ver != SsfFormat.non)
+			if (!chatter._fail)
 			{
 				var page = new TabPage();
 				page.Tag = chatter;
