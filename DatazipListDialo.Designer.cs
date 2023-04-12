@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace nwn2_Chatter
 {
-	sealed partial class DataZipListDialog
+	sealed partial class DatazipListDialog
 	{
 		#region Designer
 		Label la_Filter;
@@ -118,7 +118,7 @@ namespace nwn2_Chatter
 			this.bu_Play.UseVisualStyleBackColor = true;
 			this.bu_Play.Click += new System.EventHandler(this.click_Play);
 			// 
-			// DataZipListDialog
+			// DatazipListDialog
 			// 
 			this.AcceptButton = this.bu_Accept;
 			this.CancelButton = this.bu_Cancel;
@@ -133,7 +133,7 @@ namespace nwn2_Chatter
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Icon = global::nwn2_Chatter.Properties.Resource1.chatter_icon;
 			this.MaximizeBox = false;
-			this.Name = "DataZipListDialog";
+			this.Name = "DatazipListDialog";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.ResumeLayout(false);

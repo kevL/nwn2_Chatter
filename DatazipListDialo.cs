@@ -11,7 +11,7 @@ namespace nwn2_Chatter
 	/// A dialog that lists file-labels in the stock NwN2 /Data Zipfiles and
 	/// allows the user to select one.
 	/// </summary>
-	sealed partial class DataZipListDialog
+	sealed partial class DatazipListDialog
 		: Form
 	{
 		#region Fields (static)
@@ -45,14 +45,14 @@ namespace nwn2_Chatter
 
 		/// <summary>
 		/// The <c>FileStream</c> for <c><see cref="_zipfile"/></c> needs to
-		/// remain open for the duration of this <c>DataZipListDialog</c>. So
+		/// remain open for the duration of this <c>DatazipListDialog</c>. So
 		/// <c>Close()</c> it in
 		/// <c><see cref="OnFormClosing()">OnFormClosing()</see></c>.
 		/// </summary>
 		FileStream _fs;
 
 		/// <summary>
-		/// <c>false</c> if this <c>DataZipListDialog</c> is invoked to open a
+		/// <c>false</c> if this <c>DatazipListDialog</c> is invoked to open a
 		/// SoundSetFile or <c>true</c> if to play/insert an audiofile.
 		/// </summary>
 		bool _isaudio;
@@ -68,11 +68,11 @@ namespace nwn2_Chatter
 
 		#region cTor
 		/// <summary>
-		/// Instantiates this <c>DataZipListDialog</c>.
+		/// Instantiates this <c>DatazipListDialog</c>.
 		/// </summary>
 		/// <param name="pfe"></param>
 		/// <param name="voiceid"></param>
-		internal DataZipListDialog(string pfe, int voiceid = -1)
+		internal DatazipListDialog(string pfe, int voiceid = -1)
 		{
 			InitializeComponent();
 

@@ -523,7 +523,7 @@ namespace nwn2_Chatter
 					_lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
 
 					string label = String.Empty;
-					using (var dzld = new DataZipListDialog(ofd.FileName))
+					using (var dzld = new DatazipListDialog(ofd.FileName))
 					{
 						if (dzld.ShowDialog(this) == DialogResult.OK)
 							label = dzld.GetSelectedFile();

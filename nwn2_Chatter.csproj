@@ -58,9 +58,9 @@
       <DependentUpon>Chatter.cs</DependentUpon>
     </Compile>
     <Compile Include="Crap.cs" />
-    <Compile Include="DataZipListDialog.cs" />
-    <Compile Include="DataZipListDialog.Designer.cs">
-      <DependentUpon>DataZipListDialog.cs</DependentUpon>
+    <Compile Include="DatazipListDialo.cs" />
+    <Compile Include="DatazipListDialo.Designer.cs">
+      <DependentUpon>DatazipListDialo.cs</DependentUpon>
     </Compile>
     <Compile Include="Infobox.cs" />
     <Compile Include="Infobox.Designer.cs">
@@ -98,8 +98,8 @@
     <EmbeddedResource Include="Chatter.resx">
       <DependentUpon>Chatter.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataZipListDialog.resx">
-      <DependentUpon>DataZipListDialog.cs</DependentUpon>
+    <EmbeddedResource Include="DatazipListDialo.resx">
+      <DependentUpon>DatazipListDialo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Infobox.resx">
       <DependentUpon>Infobox.cs</DependentUpon>

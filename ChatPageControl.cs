@@ -4,8 +4,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
-
 
 namespace nwn2_Chatter
 {
@@ -392,7 +390,7 @@ namespace nwn2_Chatter
 											Chatter._lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
 
 											string label = String.Empty;
-											using (var dzld = new DataZipListDialog(ofd.FileName, r))
+											using (var dzld = new DatazipListDialog(ofd.FileName, r))
 											{
 												if (dzld.ShowDialog(this) == DialogResult.OK)
 												{
