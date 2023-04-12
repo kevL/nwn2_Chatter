@@ -171,12 +171,19 @@ namespace nwn2_Chatter
 		/// <param name="e"></param>
 		void selectedindexchanged_list(object sender, EventArgs e)
 		{
-			bu_Accept.Enabled = lb_List.SelectedIndex != -1
-							 &&  ((!_isaudio && GetSelectedFile().EndsWith(".ssf", StringComparison.OrdinalIgnoreCase))
-								|| (_isaudio && GetSelectedFile().EndsWith(".wav", StringComparison.OrdinalIgnoreCase)));
+			if (lb_List.SelectedIndex != -1)
+			{
+				string f = GetSelectedFile();
+				f = f.Substring(f.Length - 4).ToUpperInvariant();
 
-			bu_Play.Enabled = lb_List.SelectedIndex != -1
-						   && GetSelectedFile().EndsWith(".wav", StringComparison.OrdinalIgnoreCase);
+				bu_Accept.Enabled = (!_isaudio && f == ".SSF") || (_isaudio && f == ".WAV");
+				bu_Play  .Enabled = f == ".WAV";
+			}
+			else
+			{
+				bu_Accept.Enabled =
+				bu_Play  .Enabled = false;
+			}
 		}
 
 		/// <summary>
@@ -210,7 +217,8 @@ namespace nwn2_Chatter
 			}
 
 			_tid = -1;
-			bu_Accept.Enabled = false;
+			bu_Accept.Enabled =
+			bu_Play  .Enabled = false;
 
 			lb_List.EndUpdate();
 		}
@@ -240,7 +248,7 @@ namespace nwn2_Chatter
 			{
 				ofd.AutoUpgradeEnabled = false;
 
-				ofd.Title  = "Open NwN2 data/zip file";
+				ofd.Title  = "Open nwn2 /data file";
 				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
 
 //				ofd.RestoreDirectory = true; // allow tracking as last location
