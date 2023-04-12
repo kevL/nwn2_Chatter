@@ -42,8 +42,6 @@ namespace nwn2_Chatter
 
 		int _init;
 
-		string _val;
-
 		Timer _t1 = new Timer();
 		#endregion Fields
 
@@ -75,7 +73,7 @@ namespace nwn2_Chatter
 			if (Chatter.Output == SsfFormat.ssf10) _len = 16;
 			else                                   _len = 32; // Chatter.Output == SsfFormat.ssf11
 
-			tb_input.Text = _val = val;
+			tb_input.Text = val;
 			tb_input.SelectionStart = tb_input.Text.Length;
 
 			_t1.Tick += t1_tick;
@@ -113,9 +111,10 @@ namespace nwn2_Chatter
 				case Keys.Enter:
 					e.SuppressKeyPress = true;
 
-					if      (_isresref)                 _result = tb_input.Text;
-					else if (tb_input.Text.Length == 0) _result = "4294967295"; // aka. 0xFFFFFFFF
-					else                                _result = tb_input.Text;
+					if (_isresref || tb_input.Text.Length != 0)
+						_result = tb_input.Text;
+					else
+						_result = UInt32.MaxValue.ToString(); // "4294967295" aka. 0xFFFFFFFF
 
 					DialogResult = DialogResult.OK;
 					break;
