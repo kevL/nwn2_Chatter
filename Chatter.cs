@@ -159,9 +159,9 @@ namespace nwn2_Chatter
 				}
 			}
 
-			if (args.Length == 1 && File.Exists(pfe = args[0]) && !isloaded(pfe))
+			if (args.Length == 1 && File.Exists(pfe = args[0]) && !isloaded(pfe)
+				&& CreateChatterTab(new ChatPageControl(this, pfe)))
 			{
-				CreateChatterTab(new ChatPageControl(this, pfe));
 				UpdateRecents(pfe);
 			}
 		}
@@ -212,9 +212,9 @@ namespace nwn2_Chatter
 					string arg0 = Marshal.PtrToStringAnsi(copyData.lpData);
 					if (File.Exists(arg0))
 					{
-						if (!isloaded(arg0))
+						if (!isloaded(arg0)
+							&& CreateChatterTab(new ChatPageControl(this, arg0))) // load file per file-association
 						{
-							CreateChatterTab(new ChatPageControl(this, arg0)); // load file per file-association
 							UpdateRecents(arg0);
 						}
 						_t1.Start();
@@ -443,9 +443,9 @@ namespace nwn2_Chatter
 		void file_click_recent_it(object sender, EventArgs e)
 		{
 			string pfe = (sender as ToolStripItem).Text;
-			if (!isloaded(pfe))
+			if (!isloaded(pfe)
+				&& CreateChatterTab(new ChatPageControl(this, pfe)))
 			{
-				CreateChatterTab(new ChatPageControl(this, pfe));
 				UpdateRecents(pfe);
 			}
 		}
@@ -480,8 +480,8 @@ namespace nwn2_Chatter
 				{
 					_lastopendirectory = Path.GetDirectoryName(ofd.FileName);
 
-					CreateChatterTab(new ChatPageControl(this, ofd.FileName));
-					UpdateRecents(ofd.FileName);
+					if (CreateChatterTab(new ChatPageControl(this, ofd.FileName)))
+						UpdateRecents(ofd.FileName);
 				}
 			}
 		}
@@ -1047,7 +1047,9 @@ namespace nwn2_Chatter
 		/// current state.
 		/// </summary>
 		/// <param name="chatter"></param>
-		void CreateChatterTab(ChatPageControl chatter)
+		/// <returns><c>true</c> if <paramref name="chatter"/> loads into a
+		/// <c>TabPage</c> successfully</returns>
+		bool CreateChatterTab(ChatPageControl chatter)
 		{
 			if (!chatter._fail)
 			{
@@ -1067,20 +1069,20 @@ namespace nwn2_Chatter
 				pa_obstructor.Visible = false;
 
 				chatter.Select();
+				return true;
 			}
-			else
-			{
-				chatter._slotter.Dispose();
-				chatter.Dispose();
 
-				using (var ib = new Infobox(Infobox.Title_error,
-											"That is not a valid SSF file.",
-											null,
-											InfoboxType.Error))
-				{
-					ib.ShowDialog(this);
-				}
+			chatter._slotter.Dispose();
+			chatter.Dispose();
+
+			using (var ib = new Infobox(Infobox.Title_error,
+										"That is not a valid SSF file.",
+										null,
+										InfoboxType.Error))
+			{
+				ib.ShowDialog(this);
 			}
+			return false;
 		}
 
 		/// <summary>
