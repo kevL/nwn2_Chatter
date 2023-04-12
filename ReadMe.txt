@@ -1,5 +1,5 @@
 Chatter
-1.0.6.0 - 2023 april 11
+1.0.7.0 - 2023 april 12
 kevL's
 
 SoundSetFile (SSF) editor for Neverwinter Nights 2
