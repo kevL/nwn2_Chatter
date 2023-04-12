@@ -299,6 +299,7 @@ namespace nwn2_Chatter
 				File.WriteAllText(pfe, conf); // TODO: Exception handling <-
 			}
 
+//			_t1.Dispose();
 			base.OnFormClosing(e);
 		}
 
@@ -443,7 +444,10 @@ namespace nwn2_Chatter
 		{
 			string pfe = (sender as ToolStripItem).Text;
 			if (!isloaded(pfe))
+			{
 				CreateChatterTab(new ChatPageControl(this, pfe));
+				UpdateRecents(pfe);
+			}
 		}
 
 		string _lastopendirectory;
@@ -496,7 +500,7 @@ namespace nwn2_Chatter
 			{
 				ofd.AutoUpgradeEnabled = false;
 
-				ofd.Title  = "Open NwN2 data/zip file";
+				ofd.Title  = "Open nwn2 /data file";
 				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
 
 //				ofd.RestoreDirectory = true; // allow tracking as last location
@@ -736,8 +740,11 @@ namespace nwn2_Chatter
 			if (!_cancel)
 			{
 				tc_pages.SelectedTab.Controls.Remove(chatter);
-				tc_pages.TabPages.Remove(tc_pages.SelectedTab);
 
+//				tc_pages.TabPages.Remove(tc_pages.SelectedTab);
+				tc_pages.SelectedTab.Dispose();
+
+				chatter._slotter.Dispose();
 				chatter.Dispose();
 			}
 		}
@@ -1063,6 +1070,7 @@ namespace nwn2_Chatter
 			}
 			else
 			{
+				chatter._slotter.Dispose();
 				chatter.Dispose();
 
 				using (var ib = new Infobox(Infobox.Title_error,

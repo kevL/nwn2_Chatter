@@ -111,6 +111,17 @@ namespace nwn2_Chatter
 		/// file in the nwn2/data folder.
 		/// </summary>
 		internal bool _datazipfile;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <remarks><c>Dispose()</c> the <c>resref_slotter</c> when this
+		/// <c>ChatPageControl</c> gets disposed.</remarks>
+		internal ContextMenuStrip _slotter;
+
+		int _r;
+		bool _isresref, _isstrref;
 		#endregion Fields
 
 
@@ -153,6 +164,9 @@ namespace nwn2_Chatter
 			_scroller.ValueChanged += valuechanged_scroller;
 			Controls.Add(_scroller);
 
+			CreateSlotter();
+
+
 			if (_pfe == "ssf10")
 			{
 				Changed = true;
@@ -161,14 +175,6 @@ namespace nwn2_Chatter
 				_extended = false;
 
 				_rcount = 49;
-				_resrefs = new string[_rcount];
-				_strrefs = new uint  [_rcount];
-
-				for (int i = 0; i != _rcount; ++i)
-				{
-					_resrefs[i] = String.Empty;
-					_strrefs[i] = 0xFFFFFFFF;
-				}
 			}
 			else if (_pfe == "ssf11")
 			{
@@ -178,13 +184,17 @@ namespace nwn2_Chatter
 				_extended = true;
 
 				_rcount = 51;
+			}
+
+			if (Changed)
+			{
 				_resrefs = new string[_rcount];
 				_strrefs = new uint  [_rcount];
 
 				for (int i = 0; i != _rcount; ++i)
 				{
 					_resrefs[i] = String.Empty;
-					_strrefs[i] = 0xFFFFFFFF;
+					_strrefs[i] = UInt32.MaxValue;
 				}
 			}
 			else
@@ -213,9 +223,6 @@ namespace nwn2_Chatter
 
 
 		#region Handlers (override)
-		int _r;
-		bool _isresref, _isstrref;
-
 		/// <summary>
 		/// Since if an <c>OpenFileDialog</c> pops up under the mousecursor in a
 		/// <c>MouseDown</c> event the dialog will fire a <c>MouseUp</c> event
@@ -230,6 +237,8 @@ namespace nwn2_Chatter
 		/// when <c><see cref="OnMouseUp()">OnMouseUp()</see></c> fires.
 		/// </summary>
 		/// <param name="e"></param>
+		/// <remarks>An <c>OpenFileDialog</c> no longer opens on rightclick but
+		/// keep the above mechanic.</remarks>
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			_r = -1; _isresref = _isstrref = false;
@@ -292,12 +301,8 @@ namespace nwn2_Chatter
 			}
 		}
 
-		static string _lastplaydirectory;
 		/// <summary>
-		/// Overrides the <c>MouseUp</c> handler. Rightclick selects the table
-		/// and instantiates an <c><see cref="Inputbox"/></c> iff a resref or
-		/// strref is clicked. <c>[Ctrl]</c> + Leftclick invokes an
-		/// <c>OpenFileDialog</c> for the user to play a soundfile.
+		/// Overrides the <c>MouseUp</c> handler.
 		/// </summary>
 		/// <param name="e"></param>
 		protected override void OnMouseUp(MouseEventArgs e)
@@ -306,152 +311,43 @@ namespace nwn2_Chatter
 
 			if ((ModifierKeys & (Keys.Alt | Keys.Shift)) == Keys.None)
 			{
-				switch (e.Button)
+				int r = (e.Y + _scroller.Value) / ROWHEIGHT;
+				if (r == _r)
 				{
-					case MouseButtons.Left:
-						if (ModifierKeys == Keys.Control)
+					if (_isresref && e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
+					{
+						if (r < _resrefs.Length)
 						{
-							if (_isresref && e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
+							switch (e.Button)
 							{
-								int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-								if (r == _r && r < _resrefs.Length)
-								{
-									using (var ofd = new OpenFileDialog())
-									{
-										ofd.AutoUpgradeEnabled = false;
+								case MouseButtons.Left:
+									if (ModifierKeys == Keys.Control)
+										click_it_input(null, EventArgs.Empty);
+									break;
 
-										ofd.Title  = "Play WAV file";
-										ofd.Filter = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
-
-										ofd.RestoreDirectory = true; // do not track this as last location
-
-										string dir;
-										if (Directory.Exists(_lastplaydirectory))
-											dir = _lastplaydirectory;
-										else
-											dir = Chatter.GetCurrentDirectory();
-
-										ofd.FileName = Path.Combine(dir, _resrefs[r] + ".WAV");
-
-										if (ofd.ShowDialog() == DialogResult.OK)
-										{
-											_lastplaydirectory = Path.GetDirectoryName(ofd.FileName);
-
-											string audiofile = AudioConverter.deterwave(ofd.FileName); // this/these file/s will be deleted when Chatter closes
-											if (audiofile.Length != 0)
-											{
-												using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
-												using (var player = new System.Media.SoundPlayer(fs))
-												{
-													player.SoundLocation = audiofile;
-													player.Play();
-												}
-											}
-										}
-									}
-								}
+								case MouseButtons.Right:
+									ShowSlotter();
+									break;
 							}
 						}
-						break;
-
-					case MouseButtons.Right:
-						if (ModifierKeys == Keys.Control)
+					}
+					else if (_isstrref && e.X > COLWIDTH0 + COLWIDTH1 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
+					{
+						if (r < _strrefs.Length)
 						{
-							if (_isresref && e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
+							switch (e.Button)
 							{
-								int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-								if (r == _r && r < _resrefs.Length)
-								{
-									using (var ofd = new OpenFileDialog())
-									{
-										ofd.AutoUpgradeEnabled = false;
+								case MouseButtons.Left:
+									if (ModifierKeys == Keys.Control)
+										click_it_input(null, EventArgs.Empty);
+									break;
 
-										ofd.Title  = "Open NwN2 data/zip file";
-										ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
-
-										ofd.RestoreDirectory = true; // do not track this as last location
-
-										string dir;
-										if (Directory.Exists(Chatter._lastdatadirectory))
-											dir = Chatter._lastdatadirectory;
-										else
-										{
-											string dirT = Chatter.GetDatazipDirectory();
-											if (dirT != null)
-												dir = dirT;
-											else
-												dir = Chatter.GetCurrentDirectory();
-										}
-
-										ofd.FileName = Path.Combine(dir, "*.ZIP");
-						
-										if (ofd.ShowDialog() == DialogResult.OK)
-										{
-											Chatter._lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
-
-											string label = String.Empty;
-											using (var dzld = new DatazipListDialog(ofd.FileName, r))
-											{
-												if (dzld.ShowDialog(this) == DialogResult.OK)
-												{
-													label = dzld.GetSelectedFile();
-													if (label != _resrefs[r])
-													{
-														_resrefs[r] = Path.GetFileNameWithoutExtension(label);
-														Changed = true;
-														Invalidate();
-													}
-												}
-											}
-										}
-									}
-								}
+								case MouseButtons.Right:
+									ShowSlotter();
+									break;
 							}
 						}
-						else
-						{
-							int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-							if (r == _r)
-							{
-								if (_isresref && e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
-								{
-									if (r < _resrefs.Length)
-									{
-										using (var ip = new Inputbox(_resrefs[r], true))
-										{
-											if (ip.ShowDialog(this) == DialogResult.OK
-												&& ip._result != _resrefs[r])
-											{
-												_resrefs[r] = ip._result;
-												Changed = true;
-												Invalidate();
-											}
-										}
-									}
-								}
-								else if (_isstrref && e.X > COLWIDTH0 + COLWIDTH1 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
-								{
-									if (r < _strrefs.Length)
-									{
-										string strref;
-										if (_strrefs[r] == 0xFFFFFFFF) strref = String.Empty;
-										else                           strref = _strrefs[r].ToString();
-
-										using (var ip = new Inputbox(strref, false))
-										{
-											if (ip.ShowDialog(this) == DialogResult.OK
-												&& ip._result != _strrefs[r].ToString())
-											{
-												_strrefs[r] = UInt32.Parse(ip._result);
-												Changed = true;
-												Invalidate();
-											}
-										}
-									}
-								}
-							}
-						}
-						break;
+					}
 				}
 			}
 		}
@@ -531,8 +427,8 @@ namespace nwn2_Chatter
 						{
 							uint strref = _strrefs[r];
 
-							if (strref == 0xFFFFFFFF) text = String.Empty;
-							else                      text = strref.ToString();
+							if (strref == UInt32.MaxValue) text = String.Empty;
+							else                           text = strref.ToString();
 
 							rect.X = COLWIDTH0 + COLWIDTH1 + INDENT;
 							rect.Width = COLWIDTH2 - INDENT;
@@ -544,8 +440,8 @@ namespace nwn2_Chatter
 							uint strref = _strrefs[r];
 
 							int id;
-							if (strref == 0xFFFFFFFF) id = -1;
-							else                      id = (int)strref;
+							if (strref == UInt32.MaxValue) id = -1;
+							else                           id = (int)strref;
 
 							if (id != -1 && TalkReader.DictDialo.ContainsKey(id)) //TalkReader.DictDialo.Count != 0
 								text = TalkReader.DictDialo[id];
@@ -617,7 +513,6 @@ namespace nwn2_Chatter
 		void valuechanged_scroller(object sender, EventArgs e)
 		{
 			Select(); // <- focus the table when the bar is moved by mousedrag (bar has to move > 0px)
-
 			Invalidate();
 		}
 		#endregion Handlers
@@ -676,7 +571,7 @@ namespace nwn2_Chatter
 			for (int i = 0; i != _rcount; ++i)
 			{
 				if (i < _strrefs.Length) strrefs[i] = _strrefs[i];
-				else                     strrefs[i] = 0xFFFFFFFF;
+				else                     strrefs[i] = UInt32.MaxValue;
 			}
 			_strrefs = strrefs;
 
@@ -684,5 +579,382 @@ namespace nwn2_Chatter
 			Refresh();
 		}
 		#endregion Methods
+
+
+		#region Context
+		ToolStripMenuItem it_input;
+		ToolStripMenuItem it_cut;
+		ToolStripMenuItem it_copy;
+		ToolStripMenuItem it_paste;
+		ToolStripMenuItem it_delete;
+		ToolStripMenuItem it_browse;
+		ToolStripMenuItem it_browsedatazip;
+		ToolStripMenuItem it_play;
+
+
+		/// <summary>
+		/// Creates a <c>ContextMenuStrip</c> for this <c>ChatPageControl</c>.
+		/// </summary>
+		void CreateSlotter()
+		{
+			_slotter = new ContextMenuStrip();
+			_slotter.Font = new Font("Comic Sans MS", 8F);
+			_slotter.ShowImageMargin = false;
+
+			it_input = new ToolStripMenuItem();
+			it_input.Text = "input";
+			it_input.Click += click_it_input;
+
+			var sep0 = new ToolStripSeparator();
+
+			it_cut = new ToolStripMenuItem();
+			it_cut.Text = "cut";
+			it_cut.Click += click_it_cut;
+
+			it_copy = new ToolStripMenuItem();
+			it_copy.Text = "copy";
+			it_copy.Click += click_it_copy;
+
+			it_paste = new ToolStripMenuItem();
+			it_paste.Text = "paste";
+			it_paste.Click += click_it_paste;
+
+			it_delete = new ToolStripMenuItem();
+			it_delete.Text = "delete";
+			it_delete.Click += click_it_delete;
+
+			var sep1 = new ToolStripSeparator();
+
+			it_browse = new ToolStripMenuItem();
+			it_browse.Text = "browse";
+			it_browse.Click += click_it_browse;
+
+			it_browsedatazip = new ToolStripMenuItem();
+			it_browsedatazip.Text = "browse nwn2 /data";
+			it_browsedatazip.Click += click_it_browsedatazip;
+
+			it_play = new ToolStripMenuItem();
+			it_play.Text = "play";
+			it_play.Click += click_it_play;
+
+			_slotter.Items.AddRange(new ToolStripItem[]
+			{
+				it_input,
+				sep0,
+				it_cut,
+				it_copy,
+				it_paste,
+				it_delete,
+				sep1,
+				it_browse,
+				it_browsedatazip,
+				it_play
+			});
+		}
+
+		/// <summary>
+		/// Shows the rightclick context slotter.
+		/// </summary>
+		void ShowSlotter()
+		{
+			if (_isresref)
+			{
+				it_cut   .Enabled =
+				it_copy  .Enabled =
+				it_delete.Enabled = _resrefs[_r].Length != 0;
+				it_paste .Enabled = !String.IsNullOrEmpty(ClipboardService.GetText());
+
+				it_browse       .Enabled =
+				it_browsedatazip.Enabled =
+				it_play         .Enabled = true;
+			}
+			else // _isstrref
+			{
+				it_cut          .Enabled =
+				it_copy         .Enabled =
+				it_delete       .Enabled = _strrefs[_r] != UInt32.MaxValue;
+
+				string clip = ClipboardService.GetText(); uint result;
+				it_paste        .Enabled = !String.IsNullOrEmpty(clip)
+										&& UInt32.TryParse(clip, out result)
+										&& result < 0x02000000;
+
+				it_browse       .Enabled =
+				it_browsedatazip.Enabled =
+				it_play         .Enabled = false;
+			}
+
+			_slotter.Show(this, PointToClient(Cursor.Position));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender">
+		/// <list type="bullet">
+		/// <item><c><see cref="it_input"/></c></item>
+		/// <item><c>null</c> - <c><see cref="OnMouseUp()">OnMouseUp()</see></c></item>
+		/// </list></param>
+		/// <param name="e"></param>
+		void click_it_input(object sender, EventArgs e)
+		{
+			if (_isresref)
+			{
+				using (var ip = new Inputbox(_resrefs[_r], true))
+				{
+					if (ip.ShowDialog(this) == DialogResult.OK
+						&& ip._result != _resrefs[_r])
+					{
+						_resrefs[_r] = ip._result;
+						Changed = true;
+						Invalidate();
+					}
+				}
+			}
+			else // _isstrref
+			{
+				string strref;
+				if (_strrefs[_r] == UInt32.MaxValue)
+					strref = String.Empty;
+				else
+					strref = _strrefs[_r].ToString();
+
+				using (var ip = new Inputbox(strref, false))
+				{
+					if (ip.ShowDialog(this) == DialogResult.OK
+						&& ip._result != _strrefs[_r].ToString())
+					{
+						_strrefs[_r] = UInt32.Parse(ip._result);
+						Changed = true;
+						Invalidate();
+					}
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_cut"/></c></param>
+		/// <param name="e"></param>
+		void click_it_cut(object sender, EventArgs e)
+		{
+			if (_isresref)
+			{
+				ClipboardService.SetText(_resrefs[_r]);
+				_resrefs[_r] = String.Empty;
+			}
+			else // isstrref
+			{
+				ClipboardService.SetText(_strrefs[_r].ToString());
+				_strrefs[_r] = UInt32.MaxValue;
+			}
+
+			Changed = true;
+			Invalidate();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_copy"/></c></param>
+		/// <param name="e"></param>
+		void click_it_copy(object sender, EventArgs e)
+		{
+			if (_isresref)
+			{
+				ClipboardService.SetText(_resrefs[_r]);
+			}
+			else // isstrref
+			{
+				ClipboardService.SetText(_strrefs[_r].ToString());
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_paste"/></c></param>
+		/// <param name="e"></param>
+		void click_it_paste(object sender, EventArgs e)
+		{
+			if (_isresref)
+			{
+				string clip = ClipboardService.GetText();
+				if (!String.IsNullOrEmpty(clip)) // safety perhaps.
+				{
+					_resrefs[_r] = clip;
+					Changed = true;
+					Invalidate();
+				}
+			}
+			else // isstrref
+			{
+				string clip = ClipboardService.GetText();
+				if (!String.IsNullOrEmpty(clip)) // safety perhaps.
+				{
+					_strrefs[_r] = UInt32.Parse(clip);
+					Changed = true;
+					Invalidate();
+				}
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_delete"/></c></param>
+		/// <param name="e"></param>
+		void click_it_delete(object sender, EventArgs e)
+		{
+			if (_isresref)
+			{
+				_resrefs[_r] = String.Empty;
+			}
+			else // isstrref
+			{
+				_strrefs[_r] = UInt32.MaxValue;
+			}
+
+			Changed = true;
+			Invalidate();
+		}
+
+
+		static string _lastbrowsedirectory;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_browse"/></c></param>
+		/// <param name="e"></param>
+		void click_it_browse(object sender, EventArgs e)
+		{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.AutoUpgradeEnabled = false;
+
+				ofd.Title  = "Select " + Chatter.Voices[_r] + " resref";
+				ofd.Filter = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
+
+				ofd.RestoreDirectory = true; // do not track this as last location
+
+				string dir;
+				if (Directory.Exists(_lastbrowsedirectory))
+					dir = _lastbrowsedirectory;
+				else
+					dir = Chatter.GetCurrentDirectory();
+
+				ofd.FileName = Path.Combine(dir, _resrefs[_r] + ".WAV");
+
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					_lastbrowsedirectory = Path.GetDirectoryName(ofd.FileName);
+
+					string label = Path.GetFileNameWithoutExtension(ofd.FileName);
+					if (label != _resrefs[_r])
+					{
+						_resrefs[_r] = Path.GetFileNameWithoutExtension(label);
+						Changed = true;
+						Invalidate();
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_browsedatazip"/></c></param>
+		/// <param name="e"></param>
+		void click_it_browsedatazip(object sender, EventArgs e)
+		{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.AutoUpgradeEnabled = false;
+
+				ofd.Title  = "Open nwn2 /data for " + Chatter.Voices[_r];
+				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
+
+				ofd.RestoreDirectory = true; // do not track this as last location
+
+				string dir;
+				if (Directory.Exists(Chatter._lastdatadirectory))
+					dir = Chatter._lastdatadirectory;
+				else
+				{
+					string dirT = Chatter.GetDatazipDirectory();
+					if (dirT != null)
+						dir = dirT;
+					else
+						dir = Chatter.GetCurrentDirectory();
+				}
+
+				ofd.FileName = Path.Combine(dir, "*.ZIP");
+
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					Chatter._lastdatadirectory = Path.GetDirectoryName(ofd.FileName);
+
+					string label = String.Empty;
+					using (var dzld = new DatazipListDialog(ofd.FileName, _r))
+					{
+						if (dzld.ShowDialog(this) == DialogResult.OK)
+						{
+							label = Path.GetFileNameWithoutExtension(dzld.GetSelectedFile());
+							if (label != _resrefs[_r])
+							{
+								_resrefs[_r] = label;
+								Changed = true;
+								Invalidate();
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"><c><see cref="it_play"/></c></param>
+		/// <param name="e"></param>
+		void click_it_play(object sender, EventArgs e)
+		{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.AutoUpgradeEnabled = false;
+
+				ofd.Title  = "Play a voice file";
+				ofd.Filter = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
+
+				ofd.RestoreDirectory = true; // do not track this as last location
+
+				string dir;
+				if (Directory.Exists(_lastbrowsedirectory))
+					dir = _lastbrowsedirectory;
+				else
+					dir = Chatter.GetCurrentDirectory();
+
+				ofd.FileName = Path.Combine(dir, _resrefs[_r] + ".WAV");
+
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					_lastbrowsedirectory = Path.GetDirectoryName(ofd.FileName);
+
+					string audiofile = AudioConverter.deterwave(ofd.FileName); // this/these file/s will be deleted when Chatter closes
+					if (audiofile.Length != 0)
+					{
+						using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
+						using (var player = new System.Media.SoundPlayer(fs))
+						{
+							player.SoundLocation = audiofile;
+							player.Play();
+						}
+					}
+				}
+			}
+		}
+		#endregion Context
 	}
 }
