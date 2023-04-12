@@ -436,7 +436,7 @@ drive label ("C:\").
 							for (int j = 0; j != length; ++j) // write null resref
 								bw.Write((byte)0);
 
-							bw.Write((uint)0xFFFFFFFF); // write -1 strref
+							bw.Write(UInt32.MaxValue); // write -1 strref
 						}
 					}
 				}
