@@ -98,7 +98,7 @@ namespace nwn2_Chatter
 			lb_List  .BackColor = Color.AliceBlue;
 
 
-			_fs = new FileStream(pfe, FileMode.Open, FileAccess.Read);
+			_fs = new FileStream(pfe, FileMode.Open, FileAccess.Read); // TODO: Exception handling <-
 			_zipfile = new ZipFile(_fs);
 
 			ZipEntry[] zipentries = _zipfile.GetEntries();
