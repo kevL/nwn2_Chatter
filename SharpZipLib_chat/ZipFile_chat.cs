@@ -274,13 +274,11 @@ namespace nwn2_Chatter
 		/// <returns>the offset of the entry's data in the file</returns>
 		long GetEntryDataOffset(ZipEntry entry)
 		{
-			//logfile.Log("ZipFile.GetEntryDataOffset() _file= " + _file);
-
 			lock (_file)
 			{
 				_file.Seek(OffsetOfFirstEntry + entry.Offset, SeekOrigin.Begin);
 
-				uint   signature         =     (uint)_file.ReadLEUint();
+				uint   signature         =     (uint)_file.ReadLEUint(); // kL_note: wtf did they mismatch types - are they that stupid.
 				ushort extractVersion    =  (ushort)(_file.ReadLEUshort() & 0x00ff);
 				var    localFlags        = (Bitflags)_file.ReadLEUshort();
 				var    compressionMethod =   (Method)_file.ReadLEUshort();
