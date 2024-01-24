@@ -36,11 +36,10 @@ namespace nwn2_Chatter
 				|| pfe.EndsWith(EXT_BMU, StringComparison.InvariantCultureIgnoreCase))
 			{
 				var chars = new char[3];
-				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read)) // TODO: Exception handling <-
+				using (var br = new BinaryReader(fs))
 				{
-					var br = new BinaryReader(fs);
 					chars = br.ReadChars(3);
-					br.Close();
 				}
 
 				if (   chars[0] == 'B' // because .BMUs are .MP3s and NwN2 labels them as .WAVs
@@ -96,10 +95,10 @@ namespace nwn2_Chatter
 
 			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
-				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
+				//logfile.Log("pfe= " + pfe);
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read)) // TODO: Exception handling <-
+				using (var br = new BinaryReader(fs))
 				{
-					var br = new BinaryReader(fs);
-
 					char[] c = br.ReadChars(16);					// start 0
 
 					if (   c[ 0] == 'R' && c[ 1] == 'I' && c[ 2] == 'F' && c[ 3] == 'F'
@@ -109,18 +108,23 @@ namespace nwn2_Chatter
 						br.ReadBytes(4);							// start 16
 
 						short format = br.ReadInt16();				// start 20: is PCM
+						//logfile.Log("format= " + format);
+
 						if (format == (short)1)
 						{
 							short channels = br.ReadInt16();		// start 22: is Mono
+							//logfile.Log("channels= " + channels);
 							if (channels == (short)1)
 							{
 								// TODO: Sample-rate and bit-depth should probably be relaxed.
 
 								int rate = br.ReadInt32();			// start 24: is 44.1kHz
+								//logfile.Log("rate= " + rate);
 								if (rate == 44100)
 								{
 									br.ReadBytes(6);				// start 28
 									short bits = br.ReadInt16();	// start 34: is 16-bit
+									//logfile.Log("bits= " + bits);
 									if (bits == (short)16)
 									{
 										audiofile = pfe;
@@ -128,11 +132,34 @@ namespace nwn2_Chatter
 								}
 							}
 						}
+
+/*						else if (format == (short)17) // ADPCM -> windows won't play this natively.
+						{
+							short channels = br.ReadInt16();		// start 22: is Mono
+							//logfile.Log("channels= " + channels);
+							if (channels == (short)1)
+							{
+								// TODO: Sample-rate and bit-depth should probably be relaxed.
+
+								int rate = br.ReadInt32();			// start 24: is 44.1kHz
+								//logfile.Log("rate= " + rate);
+								if (rate == 44100)
+								{
+									br.ReadBytes(6);				// start 28
+									short bits = br.ReadInt16();	// start 34: is 16-bit
+									//logfile.Log("bits= " + bits);
+									if (bits == (short)4)
+									{
+										audiofile = pfe;
+									}
+								}
+							}
+						} */
 					}
-					br.Close();
 				}
 			}
 
+			//logfile.Log("audiofile= " + audiofile);
 			if (audiofile.Length == 0)
 			using (var ib = new Infobox(Infobox.Title_error,
 										"Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.",
