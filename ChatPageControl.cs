@@ -633,6 +633,8 @@ namespace nwn2_Chatter
 			it_browsedatazip.Text = "browse nwn2 /data";
 			it_browsedatazip.Click += click_it_browsedatazip;
 
+			var sep2 = new ToolStripSeparator();
+
 			it_play = new ToolStripMenuItem();
 			it_play.Text = "play";
 			it_play.Click += click_it_play;
@@ -648,6 +650,7 @@ namespace nwn2_Chatter
 				sep1,
 				it_browse,
 				it_browsedatazip,
+				sep2,
 				it_play
 			});
 		}
