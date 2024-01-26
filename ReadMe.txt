@@ -1,5 +1,5 @@
 Chatter
-1.0.8.0 - 2024 january 23
+1.1.0.0 - 2024 january 25
 kevL's
 
 SoundSetFile (SSF) editor for Neverwinter Nights 2
@@ -43,6 +43,9 @@ should appear at the right of the table.
 
 Included in this Chatter package is a LAME 3.100 executable for decoding
 MPEG-audio layer 3 (MP3) to PCM-audio (WAV) playback.
+
+Chatter uses a parsed down version of NAudio for decoding ADPCM wavefiles to
+PCM-audio (WAV) playback. See the sourcecode for licensing and attribution.
 
 Chatter uses a parsed down version of SharpZipLib for decompressing zipped files
 in Neverwinter Nights 2's installation/data folder. See the sourcecode for
