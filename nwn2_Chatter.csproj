@@ -73,6 +73,51 @@
       <DependentUpon>Inputbox.cs</DependentUpon>
     </Compile>
     <Compile Include="logfile.cs" />
+    <Compile Include="NAudio_chat\Dmo\AudioMediaSubtypes.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Wav\WaveFileChunkReader.cs" />
+    <Compile Include="NAudio_chat\MmException.cs" />
+    <Compile Include="NAudio_chat\MmResult.cs" />
+    <Compile Include="NAudio_chat\Utils\BufferHelpers.cs" />
+    <Compile Include="NAudio_chat\Utils\ChunkIdentifier.cs" />
+    <Compile Include="NAudio_chat\Utils\IgnoreDisposeStream.cs" />
+    <Compile Include="NAudio_chat\Utils\MarshalHelpers.cs" />
+    <Compile Include="NAudio_chat\Wave\AcmMetrics.cs" />
+    <Compile Include="NAudio_chat\Wave\AcmStreamConvertFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\AdpcmWaveFormat.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmDriverAddFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmDriverDetails.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmDriverDetailsSupportFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmDriverEnumFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmFormatChoose.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmFormatChooseStyleFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmFormatDetails.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmFormatEnumFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmFormatSuggestFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmFormatTagDetails.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmInterop.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmStream.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmStreamHeader.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmStreamHeaderStatusFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmStreamHeaderStruct.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmStreamOpenFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\AcmStreamSizeFlags.cs" />
+    <Compile Include="NAudio_chat\Wave\Compression\WaveFilter.cs" />
+    <Compile Include="NAudio_chat\Wave\Gsm610WaveFormat.cs" />
+    <Compile Include="NAudio_chat\Wave\IWaveBuffer.cs" />
+    <Compile Include="NAudio_chat\Wave\IWaveProvider.cs" />
+    <Compile Include="NAudio_chat\Wave\IWaveProviderFloat.cs" />
+    <Compile Include="NAudio_chat\Wave\RiffChunk.cs" />
+    <Compile Include="NAudio_chat\Wave\SampleProviders\SampleToWaveProvider16.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveBuffer.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFileReader.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFileWriter.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFormat.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFormatConversionProvider.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFormatConversionStream.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFormatEncoding.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFormatExtensible.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveFormatExtraData.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveStream.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resource1.Designer.cs">
@@ -114,6 +159,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="NAudio_chat" />
+    <Folder Include="NAudio_chat\Dmo" />
+    <Folder Include="NAudio_chat\FileFormats" />
+    <Folder Include="NAudio_chat\FileFormats\Wav" />
+    <Folder Include="NAudio_chat\Utils" />
+    <Folder Include="NAudio_chat\Wave" />
+    <Folder Include="NAudio_chat\Wave\Compression" />
+    <Folder Include="NAudio_chat\Wave\SampleProviders" />
     <Folder Include="SharpZipLib_chat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
