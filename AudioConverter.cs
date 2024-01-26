@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
+using NAudio.Wave;
+
 
 namespace nwn2_Chatter
 {
@@ -22,14 +24,21 @@ namespace nwn2_Chatter
 
 		#region methods (static)
 		/// <summary>
-		/// Determines the file to use for the SpeechRecognition filestream
-		/// converting it from BMU/MP3 to WAV if necessary.
+		/// Determines the file to play - converts it from BMU/MP3 or ADPCM to
+		/// a PCM wavefile if necessary.
 		/// </summary>
 		/// <param name="pfe">path_file_extension</param>
 		/// <returns>the fullpath to a PCM-wave file else a blank-string</returns>
 		/// <remarks>The result shall be PCM 44.1kHz 16-bit Mono.</remarks>
 		internal static string deterwave(string pfe)
 		{
+			//logfile.Log("AudioConverter.deterwave() pfe= " + pfe);
+
+			string info_pfe = pfe;
+
+			bool info_BMU = false;
+			bool info_MP3 = false;
+
 			string path = Path.GetTempPath();
 
 			if (   pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase) // prep .BMU ->
@@ -46,9 +55,11 @@ namespace nwn2_Chatter
 					&& chars[1] == 'M'
 					&& chars[2] == 'U')
 				{
-					string pfeT = Path.Combine(path, TEMP_MP3); // so label it as .MP3 and allow the next block to catch it.
+					info_BMU = true;
 
+					string pfeT = Path.Combine(path, TEMP_MP3); // so label it as .MP3 and allow the next block to catch it.
 					File.Delete(pfeT);
+
 					File.Copy(pfe, pfeT);
 
 					pfe = pfeT;
@@ -57,6 +68,8 @@ namespace nwn2_Chatter
 
 			if (pfe.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
+				info_MP3 = !info_BMU;
+
 				string pfeT = Path.Combine(path, TEMP_WAV);
 				File.Delete(pfeT);
 
@@ -91,11 +104,19 @@ namespace nwn2_Chatter
 // 37-40	"data"				"data" chunk header. Marks the beginning of the data section.
 // 41-44	File size (data)	Size of the data section.
 
+			bool info_PCM   = false;
+			bool info_ADPCM = false;
+
+			short channels = -1;
+			int   rate     = -1;
+			short bits     = -1;
+
+
 			string audiofile = String.Empty;
 
 			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
-				//logfile.Log("pfe= " + pfe);
+				//logfile.Log(". pfe= " + pfe);
 				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read)) // TODO: Exception handling <-
 				using (var br = new BinaryReader(fs))
 				{
@@ -105,68 +126,75 @@ namespace nwn2_Chatter
 						&& c[ 8] == 'W' && c[ 9] == 'A' && c[10] == 'V' && c[11] == 'E'
 						&& c[12] == 'f' && c[13] == 'm' && c[14] == 't' && c[15] == ' ')
 					{
-						br.ReadBytes(4);							// start 16
+						short format;
 
-						short format = br.ReadInt16();				// start 20: is PCM
-						//logfile.Log("format= " + format);
+								   br.ReadBytes(4);	// start 16
+						format   = br.ReadInt16();	// start 20: is PCM
+
+						channels = br.ReadInt16();	// start 22: is Mono
+						rate     = br.ReadInt32();	// start 24: is 44.1kHz
+								   br.ReadBytes(6);	// start 28
+						bits     = br.ReadInt16();	// start 34: is 16-bit
+
+						//logfile.Log(". . format= " + format);
+						//logfile.Log(". . channels= " + channels);
+						//logfile.Log(". . rate= " + rate);
+						//logfile.Log(". . bits= " + bits);
 
 						if (format == (short)1)
 						{
-							short channels = br.ReadInt16();		// start 22: is Mono
-							//logfile.Log("channels= " + channels);
-							if (channels == (short)1)
-							{
-								// TODO: Sample-rate and bit-depth should probably be relaxed.
+							info_PCM = !info_BMU && !info_PCM;
 
-								int rate = br.ReadInt32();			// start 24: is 44.1kHz
-								//logfile.Log("rate= " + rate);
-								if (rate == 44100)
-								{
-									br.ReadBytes(6);				// start 28
-									short bits = br.ReadInt16();	// start 34: is 16-bit
-									//logfile.Log("bits= " + bits);
-									if (bits == (short)16)
-									{
-										audiofile = pfe;
-									}
-								}
+							// TODO: Sample-rate and bit-depth should probably be relaxed.
+							if (channels == (short)1
+								&& rate  == 44100
+								&& bits  == (short)16)
+							{
+								audiofile = pfe;
 							}
 						}
-
-/*						else if (format == (short)17) // ADPCM -> windows won't play this natively.
+						else if (format == (short)17) // ADPCM -> windows won't play this natively.
 						{
-							short channels = br.ReadInt16();		// start 22: is Mono
-							//logfile.Log("channels= " + channels);
-							if (channels == (short)1)
-							{
-								// TODO: Sample-rate and bit-depth should probably be relaxed.
+							info_ADPCM = true;
 
-								int rate = br.ReadInt32();			// start 24: is 44.1kHz
-								//logfile.Log("rate= " + rate);
-								if (rate == 44100)
+							// TODO: Sample-rate should probably be relaxed.
+							if (channels == (short)1
+								&& rate == 44100
+								&& bits == (short)4)
+							{
+								string pfeT = Path.Combine(path, TEMP_WAV);
+								File.Delete(pfeT);
+
+								using (var reader = new WaveFileReader(pfe))
+								using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
+								using (var output = new WaveFormatConversionStream(new WaveFormat(44100, input.WaveFormat.Channels), input))
 								{
-									br.ReadBytes(6);				// start 28
-									short bits = br.ReadInt16();	// start 34: is 16-bit
-									//logfile.Log("bits= " + bits);
-									if (bits == (short)4)
-									{
-										audiofile = pfe;
-									}
+									WaveFileWriter.CreateWaveFile(pfeT, output); // bingo.
 								}
+								audiofile = pfeT;
 							}
-						} */
+						}
 					}
 				}
 			}
 
 			//logfile.Log("audiofile= " + audiofile);
 			if (audiofile.Length == 0)
-			using (var ib = new Infobox(Infobox.Title_error,
-										"Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.",
-										null,
-										InfoboxType.Error))
 			{
-				ib.ShowDialog();
+				string copyable = "input" + Environment.NewLine
+								+ info_pfe + Environment.NewLine
+								+ (info_BMU ? "BMU" : (info_MP3 ? "MP3" : (info_PCM ? "PCM" : (info_ADPCM ? "ADPCM" : "unknown")))) + Environment.NewLine
+								+ "channels " + (channels != -1 ? channels.ToString() : "unknown") + Environment.NewLine
+								+ "rate " + (rate != -1 ? rate.ToString() : "unknown") + Environment.NewLine
+								+ "bits " + (bits != -1 ? bits.ToString() : "unknown");
+
+				using (var ib = new Infobox(Infobox.Title_error,
+											"Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.",
+											copyable,
+											InfoboxType.Error))
+				{
+					ib.ShowDialog();
+				}
 			}
 
 			return audiofile;
