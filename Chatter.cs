@@ -79,7 +79,28 @@ namespace nwn2_Chatter
 		/// after a double-click in FileExplorer loads a file. Stops tick.
 		/// </summary>
 		Timer _t1 = new Timer();
+
+		/// <summary>
+		/// Mouseclicks on <c><see cref="ChatPageControl"/></c> will be disabled
+		/// when Chatter goes inactive. This is to prevent a mouseclick on the
+		/// Resref or Strref cols from opening an <c><see cref="Inputbox"/></c>
+		/// when user simply wants to re-activate Chatter. The dis/enabled state
+		/// is tracked by <c><see cref="BypassClicks"/></c> - which will be set
+		/// <c>true</c> in <c><see cref="OnDeactivate()">OnDeactivate()</see></c>
+		/// and <c>false</c> in <c><see cref="OnActivated()">OnActivated()</see></c>
+		/// 25 ms after activation.
+		/// </summary>
+		Timer _t2 = new Timer();
 		#endregion Fields
+
+
+		#region Properties (static)
+		/// <summary>
+		/// Tracks if a mouseclick is allowed wrt/ Activation state.
+		/// </summary>
+		internal static bool BypassClicks
+		{ get; private set; }
+		#endregion Properties (static)
 
 
 		#region cTor
@@ -113,6 +134,9 @@ namespace nwn2_Chatter
 
 			_t1.Interval = SystemInformation.DoubleClickTime + 15;
 			_t1.Tick += tick_t1;
+
+			_t2.Interval = 25;
+			_t2.Tick += tick_t2;
 
 
 			string pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
@@ -300,6 +324,7 @@ namespace nwn2_Chatter
 			}
 
 //			_t1.Dispose();
+//			_t2.Dispose();
 			base.OnFormClosing(e);
 		}
 
@@ -326,6 +351,45 @@ namespace nwn2_Chatter
 			}
 
 			base.OnKeyDown(e);
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnDeactivate(EventArgs e)
+		{
+			BypassClicks = true;
+			base.OnDeactivate(e);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnActivated(EventArgs e)
+		{
+			_t2.Start();
+			base.OnActivated(e);
+		}
+
+		/// <summary>
+		/// Mouseclicks on <c><see cref="ChatPageControl"/></c> will be disabled
+		/// when Chatter goes inactive. This is to prevent a mouseclick on the
+		/// Resref or Strref cols from opening an <c><see cref="Inputbox"/></c>
+		/// when user simply wants to re-activate Chatter. The dis/enabled state
+		/// is tracked by <c><see cref="BypassClicks"/></c> - which will be set
+		/// <c>true</c> in <c><see cref="OnDeactivate()">OnDeactivate()</see></c>
+		/// and <c>false</c> in <c><see cref="OnActivated()">OnActivated()</see></c>
+		/// 25 ms after activation.
+		/// </summary>
+		/// <param name="sender"><c><see cref="_t2"/></c></param>
+		/// <param name="e"></param>
+		void tick_t2(object sender, EventArgs e)
+		{
+			_t2.Stop();
+			BypassClicks = false;
 		}
 		#endregion Handlers (override)
 

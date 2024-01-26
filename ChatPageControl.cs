@@ -243,60 +243,22 @@ namespace nwn2_Chatter
 		{
 			_r = -1; _isresref = _isstrref = false;
 
-			if ((ModifierKeys & (Keys.Alt | Keys.Shift)) == Keys.None)
+			if (!Chatter.BypassClicks
+				&& (ModifierKeys & Keys.Alt) == Keys.None
+				&& (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
+				&& e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
 			{
-				switch (e.Button)
+				int r = (e.Y + _scroller.Value) / ROWHEIGHT;
+
+				if (e.X < COLWIDTH0 + COLWIDTH1) // is Resref ->
 				{
-					case MouseButtons.Left:
-						if (ModifierKeys == Keys.Control)
-						{
-							if (e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
-							{
-								int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-								if (r < _resrefs.Length)
-								{
-									_r = r;
-									_isresref = true;;
-								}
-							}
-						}
-						break;
-
-					case MouseButtons.Right:
-						if (ModifierKeys == Keys.Control)
-						{
-							if (e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
-							{
-								int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-								if (r < _resrefs.Length)
-								{
-									_r = r;
-									_isresref = true;;
-								}
-							}
-						}
-						else
-						{
-							int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-
-							if (e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
-							{
-								if (r < _resrefs.Length)
-								{
-									_r = r;
-									_isresref = true;;
-								}
-							}
-							else if (e.X > COLWIDTH0 + COLWIDTH1 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
-							{
-								if (r < _strrefs.Length)
-								{
-									_r = r;
-									_isstrref = true;;
-								}
-							}
-						}
-						break;
+					if (r < _resrefs.Length)
+						_r = r; _isresref = true;
+				}
+				else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == Keys.None) // is Strref ->
+				{
+					if (r < _strrefs.Length)
+						_r = r; _isstrref = true;
 				}
 			}
 		}
@@ -309,43 +271,68 @@ namespace nwn2_Chatter
 		{
 			Select();
 
-			if ((ModifierKeys & (Keys.Alt | Keys.Shift)) == Keys.None)
+			if ((ModifierKeys & Keys.Alt) == Keys.None
+				&& (e.Y + _scroller.Value) / ROWHEIGHT == _r)
 			{
-				int r = (e.Y + _scroller.Value) / ROWHEIGHT;
-				if (r == _r)
+				if (_isresref && e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
 				{
-					if (_isresref && e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1)
+					if (_r < _resrefs.Length)
 					{
-						if (r < _resrefs.Length)
+						switch (e.Button)
 						{
-							switch (e.Button)
-							{
-								case MouseButtons.Left:
-									if (ModifierKeys == Keys.Control)
-										click_it_input(null, EventArgs.Empty);
-									break;
+							case MouseButtons.Left:
+								if (ModifierKeys == Keys.Shift) // browse and Play file ->
+								{
+									click_it_play(null, EventArgs.Empty);
+								}
+								else if (ModifierKeys == Keys.Control) // browse for file ->
+								{
+									click_it_browse(null, EventArgs.Empty);
+								}
+								else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == Keys.None) // input text ->
+								{
+									click_it_input(null, EventArgs.Empty);
+								}
+								break;
 
-								case MouseButtons.Right:
-									ShowSlotter();
-									break;
-							}
+							case MouseButtons.Right:
+								if ((ModifierKeys & Keys.Shift) == Keys.None)
+								{
+									if (ModifierKeys == Keys.Control) // browse /Data zipfile ->
+									{
+										click_it_browsedatazip(null, EventArgs.Empty);
+									}
+									else // context ->
+									{
+										ShowSlotter();
+									}
+								}
+								break;
 						}
 					}
-					else if (_isstrref && e.X > COLWIDTH0 + COLWIDTH1 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
+				}
+				else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == Keys.None
+					&& _isstrref && e.X > COLWIDTH0 + COLWIDTH1 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
+				{
+					if (_r < _strrefs.Length)
 					{
-						if (r < _strrefs.Length)
+						switch (e.Button)
 						{
-							switch (e.Button)
-							{
-								case MouseButtons.Left:
-									if (ModifierKeys == Keys.Control)
-										click_it_input(null, EventArgs.Empty);
-									break;
+							case MouseButtons.Left: // input integer ->
+//								if (ModifierKeys == Keys.Control)
+//									TODO: browse Dialog.Tlk
+//								else // show Inputbox ->
 
-								case MouseButtons.Right:
-									ShowSlotter();
-									break;
-							}
+								click_it_input(null, EventArgs.Empty);
+								break;
+
+							case MouseButtons.Right: // context ->
+//								if (ModifierKeys == Keys.Control)
+//									TODO: browse Dialog.Tlk
+//								else // show Slotter ->
+
+								ShowSlotter();
+								break;
 						}
 					}
 				}
@@ -602,7 +589,6 @@ namespace nwn2_Chatter
 			_slotter.ShowImageMargin = false;
 
 			it_input = new ToolStripMenuItem();
-			it_input.Text = "input";
 			it_input.Click += click_it_input;
 
 			var sep0 = new ToolStripSeparator();
@@ -626,17 +612,17 @@ namespace nwn2_Chatter
 			var sep1 = new ToolStripSeparator();
 
 			it_browse = new ToolStripMenuItem();
-			it_browse.Text = "browse";
+			it_browse.Text = "browse for file";
 			it_browse.Click += click_it_browse;
 
 			it_browsedatazip = new ToolStripMenuItem();
-			it_browsedatazip.Text = "browse nwn2 /data";
+			it_browsedatazip.Text = "browse /Data zipfile";
 			it_browsedatazip.Click += click_it_browsedatazip;
 
 			var sep2 = new ToolStripSeparator();
 
 			it_play = new ToolStripMenuItem();
-			it_play.Text = "play";
+			it_play.Text = "browse and Play file";
 			it_play.Click += click_it_play;
 
 			_slotter.Items.AddRange(new ToolStripItem[]
@@ -662,10 +648,14 @@ namespace nwn2_Chatter
 		{
 			if (_isresref)
 			{
+				it_input.Text = "input text";
+
 				it_cut   .Enabled =
 				it_copy  .Enabled =
 				it_delete.Enabled = _resrefs[_r].Length != 0;
-				it_paste .Enabled = !String.IsNullOrEmpty(ClipboardService.GetText());
+
+				string clip = ClipboardService.GetText();
+				it_paste .Enabled = !String.IsNullOrEmpty(clip) && Inputbox.islegal(clip);
 
 				it_browse       .Enabled =
 				it_browsedatazip.Enabled =
@@ -673,6 +663,8 @@ namespace nwn2_Chatter
 			}
 			else // _isstrref
 			{
+				it_input.Text = "input integer";
+
 				it_cut          .Enabled =
 				it_copy         .Enabled =
 				it_delete       .Enabled = _strrefs[_r] != UInt32.MaxValue;
@@ -829,7 +821,11 @@ namespace nwn2_Chatter
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="sender"><c><see cref="it_browse"/></c></param>
+		/// <param name="sender">
+		/// <list type="bullet">
+		/// <item><c><see cref="it_browse"/></c></item>
+		/// <item><c>null</c> - <c><see cref="OnMouseUp()">OnMouseUp()</see></c></item>
+		/// </list></param>
 		/// <param name="e"></param>
 		void click_it_browse(object sender, EventArgs e)
 		{
@@ -868,7 +864,11 @@ namespace nwn2_Chatter
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="sender"><c><see cref="it_browsedatazip"/></c></param>
+		/// <param name="sender">
+		/// <list type="bullet">
+		/// <item><c><see cref="it_browsedatazip"/></c></item>
+		/// <item><c>null</c> - <c><see cref="OnMouseUp()">OnMouseUp()</see></c></item>
+		/// </list></param>
 		/// <param name="e"></param>
 		void click_it_browsedatazip(object sender, EventArgs e)
 		{
@@ -920,7 +920,11 @@ namespace nwn2_Chatter
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="sender"><c><see cref="it_play"/></c></param>
+		/// <param name="sender">
+		/// <list type="bullet">
+		/// <item><c><see cref="it_play"/></c></item>
+		/// <item><c>null</c> - <c><see cref="OnMouseUp()">OnMouseUp()</see></c></item>
+		/// </list></param>
 		/// <param name="e"></param>
 		void click_it_play(object sender, EventArgs e)
 		{

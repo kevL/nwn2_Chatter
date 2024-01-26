@@ -240,7 +240,7 @@ namespace nwn2_Chatter
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		static bool islegal(string input)
+		public static bool islegal(string input)
 		{
 			foreach (char @char in input)
 			{
