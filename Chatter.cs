@@ -298,10 +298,10 @@ namespace nwn2_Chatter
 			string path = Path.GetTempPath();
 
 			string pfe = Path.Combine(path, AudioConverter.TEMP_MP3);
-			if (File.Exists(pfe)) File.Delete(pfe);
+			File.Delete(pfe);
 
 			pfe = Path.Combine(path, AudioConverter.TEMP_WAV);
-			if (File.Exists(pfe)) File.Delete(pfe);
+			File.Delete(pfe);
 
 
 			var sb = new StringBuilder();
