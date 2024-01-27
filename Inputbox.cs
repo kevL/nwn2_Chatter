@@ -54,9 +54,12 @@ namespace nwn2_Chatter
 		/// <param name="isresref"></param>
 		internal Inputbox(string val, bool isresref)
 		{
-			_isresref = isresref;
-
 			InitializeComponent();
+
+			if (_isresref = isresref)
+				Text = "input text";
+			else
+				Text = "input integer";
 
 			ClientSize = new Size(242, 24);
 			MinimumSize = new Size(Size.Width, Size.Height);

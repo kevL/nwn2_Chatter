@@ -35,7 +35,6 @@ namespace nwn2_Chatter
 			this.Name = "Inputbox";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "input";
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
