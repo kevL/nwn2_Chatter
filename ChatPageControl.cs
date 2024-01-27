@@ -220,8 +220,8 @@ namespace nwn2_Chatter
 
 				if (_rcount != -1)
 				{
-					if      (ver == SoundsetFileService.Ver1) _ver = SsfFormat.ssf10;
-					else if (ver == SoundsetFileService.Ver2) _ver = SsfFormat.ssf11;
+					if      (ver == SoundsetFileService.Ver10) _ver = SsfFormat.ssf10;
+					else if (ver == SoundsetFileService.Ver11) _ver = SsfFormat.ssf11;
 
 					_extended = (_rcount > 49);
 				}

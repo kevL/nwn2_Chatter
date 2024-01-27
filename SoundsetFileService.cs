@@ -8,8 +8,8 @@ namespace nwn2_Chatter
 	static class SoundsetFileService
 	{
 		#region Fields (static)
-		internal const string Ver1 = "SSF V1.0";
-		internal const string Ver2 = "SSF V1.1";
+		internal const string Ver10 = "SSF V1.0";
+		internal const string Ver11 = "SSF V1.1";
 		#endregion Fields (static)
 
 
@@ -137,7 +137,7 @@ SecurityException: The caller does not have the required permission.
 			ver = Encoding.ASCII.GetString(buffer, 0, buffer.Length);
 			//logfile.Log(". ver= " + ver);
 
-			if (ver == Ver1 || ver == Ver2)
+			if (ver == Ver10 || ver == Ver11)
 			{
 				bool le = BitConverter.IsLittleEndian; // hardware architecture
 
@@ -183,7 +183,7 @@ SecurityException: The caller does not have the required permission.
 
 
 					// datatable ->
-					int resreflength = (ver == Ver1) ? 16 : 32;
+					int resreflength = (ver == Ver10) ? 16 : 32;
 
 					resrefs = new string[dataoffsets.Length];
 					strrefs = new uint[dataoffsets.Length];
@@ -363,13 +363,13 @@ drive label ("C:\").
 
 					if (Chatter.Output == SsfFormat.ssf10)
 					{
-						ver = Ver1;		// nwn "SSF V1.0"
-						length = 16;	// nwn 16-byte resrefs
+						ver = Ver10; // nwn "SSF V1.0"
+						length = 16; // nwn 16-byte resrefs
 					}
 					else // Chatter.Output == SsfFormat.ssf11
 					{
-						ver = Ver2;		// nwn2 "SSF V1.1"
-						length = 32;	// nwn2 32-byte resrefs
+						ver = Ver11; // nwn2 "SSF V1.1"
+						length = 32; // nwn2 32-byte resrefs
 					}
 
 					if (Chatter.Extended) count = (uint)51;
