@@ -74,10 +74,19 @@
     </Compile>
     <Compile Include="logfile.cs" />
     <Compile Include="NAudio_chat\Dmo\AudioMediaSubtypes.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\ChannelMode.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\Id3v2Tag.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\IMp3FrameDecompressor.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\Mp3Frame.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\Mp3FrameDecompressor.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\MpegLayer.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\MpegVersion.cs" />
+    <Compile Include="NAudio_chat\FileFormats\Mp3\XingHeader.cs" />
     <Compile Include="NAudio_chat\FileFormats\Wav\WaveFileChunkReader.cs" />
     <Compile Include="NAudio_chat\MmException.cs" />
     <Compile Include="NAudio_chat\MmResult.cs" />
     <Compile Include="NAudio_chat\Utils\BufferHelpers.cs" />
+    <Compile Include="NAudio_chat\Utils\ByteArrayExtensions.cs" />
     <Compile Include="NAudio_chat\Utils\ChunkIdentifier.cs" />
     <Compile Include="NAudio_chat\Utils\IgnoreDisposeStream.cs" />
     <Compile Include="NAudio_chat\Utils\MarshalHelpers.cs" />
@@ -106,6 +115,7 @@
     <Compile Include="NAudio_chat\Wave\IWaveBuffer.cs" />
     <Compile Include="NAudio_chat\Wave\IWaveProvider.cs" />
     <Compile Include="NAudio_chat\Wave\IWaveProviderFloat.cs" />
+    <Compile Include="NAudio_chat\Wave\Mp3WaveFormat.cs" />
     <Compile Include="NAudio_chat\Wave\RiffChunk.cs" />
     <Compile Include="NAudio_chat\Wave\SampleProviders\SampleToWaveProvider16.cs" />
     <Compile Include="NAudio_chat\Wave\WaveBuffer.cs" />
@@ -117,7 +127,8 @@
     <Compile Include="NAudio_chat\Wave\WaveFormatEncoding.cs" />
     <Compile Include="NAudio_chat\Wave\WaveFormatExtensible.cs" />
     <Compile Include="NAudio_chat\Wave\WaveFormatExtraData.cs" />
-    <Compile Include="NAudio_chat\Wave\WaveStream.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveStreams\Mp3FileReader.cs" />
+    <Compile Include="NAudio_chat\Wave\WaveStreams\WaveStream.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resource1.Designer.cs">
@@ -162,10 +173,12 @@
     <Folder Include="NAudio_chat" />
     <Folder Include="NAudio_chat\Dmo" />
     <Folder Include="NAudio_chat\FileFormats" />
+    <Folder Include="NAudio_chat\FileFormats\Mp3" />
     <Folder Include="NAudio_chat\FileFormats\Wav" />
     <Folder Include="NAudio_chat\Utils" />
     <Folder Include="NAudio_chat\Wave" />
     <Folder Include="NAudio_chat\Wave\Compression" />
+    <Folder Include="NAudio_chat\Wave\WaveStreams" />
     <Folder Include="NAudio_chat\Wave\SampleProviders" />
     <Folder Include="SharpZipLib_chat" />
   </ItemGroup>

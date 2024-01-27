@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 using NAudio.Wave;
 
@@ -73,36 +73,30 @@ namespace nwn2_Chatter
 				string pfeT = Path.Combine(path, TEMP_WAV);
 				File.Delete(pfeT);
 
+				// Convert MP3 file to WAV using NAudio classes only
+				using (var reader = new Mp3FileReader(pfe))
+				using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
+				using (var output = new WaveFormatConversionStream(new WaveFormat(44100, input.WaveFormat.Channels), input))
+				{
+					WaveFileWriter.CreateWaveFile(pfeT, output); // bingo.
+				}
+
+				// Convert MP3 file to WAV using Lame executable
 //				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 //				var info = new ProcessStartInfo(Path.Combine(execpath, LAME_EXE));
-				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
-				info.Arguments = "--decode \"" + pfe + "\" \"" + pfeT + "\"";
-				info.WindowStyle = ProcessWindowStyle.Hidden;
-				info.UseShellExecute = false;
-				info.CreateNoWindow  = true;
 
-				using (Process proc = Process.Start(info))
-				{
-					proc.WaitForExit();
-				}
+//				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
+//				info.Arguments = "--decode \"" + pfe + "\" \"" + pfeT + "\"";
+//				info.WindowStyle = ProcessWindowStyle.Hidden;
+//				info.UseShellExecute = false;
+//				info.CreateNoWindow  = true;
+//
+//				using (Process proc = Process.Start(info))
+//					proc.WaitForExit();
 
 				pfe = pfeT;
 			}
 
-// http://www.topherlee.com/software/pcm-tut-wavformat.html
-//  1- 4	"RIFF"				Marks the file as a riff file. Characters are each 1 byte long.
-//  5- 8	File size (integer)	Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you'd fill this in after creation.
-//  9-12	"WAVE"				File Type Header. For our purposes, it always equals "WAVE".
-// 13-16	"fmt "				Format chunk marker. Includes trailing null
-// 17-20	16					Length of format data as listed above
-// 21-22	1					Type of format (1 is PCM) - 2 byte integer
-// 23-24	2					Number of Channels - 2 byte integer
-// 25-28	44100				Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz.
-// 29-32	176400				(Sample Rate * BitsPerSample * Channels) / 8.
-// 33-34	4					(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
-// 35-36	16					Bits per sample
-// 37-40	"data"				"data" chunk header. Marks the beginning of the data section.
-// 41-44	File size (data)	Size of the data section.
 
 			bool info_PCM   = false;
 			bool info_ADPCM = false;
@@ -112,7 +106,7 @@ namespace nwn2_Chatter
 			short bits     = -1;
 
 
-			string audiofile = String.Empty;
+			string audiofile = null;
 
 			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
@@ -120,7 +114,7 @@ namespace nwn2_Chatter
 				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read)) // TODO: Exception handling <-
 				using (var br = new BinaryReader(fs))
 				{
-					char[] c = br.ReadChars(16);					// start 0
+					char[] c = br.ReadChars(16); // start 0
 
 					if (   c[ 0] == 'R' && c[ 1] == 'I' && c[ 2] == 'F' && c[ 3] == 'F'
 						&& c[ 8] == 'W' && c[ 9] == 'A' && c[10] == 'V' && c[11] == 'E'
@@ -179,7 +173,7 @@ namespace nwn2_Chatter
 			}
 
 			//logfile.Log("audiofile= " + audiofile);
-			if (audiofile.Length == 0)
+			if (audiofile == null)
 			{
 				string copyable = "input" + Environment.NewLine
 								+ info_pfe + Environment.NewLine
@@ -202,3 +196,32 @@ namespace nwn2_Chatter
 		#endregion methods (static)
 	}
 }
+
+// http://www.topherlee.com/software/pcm-tut-wavformat.html
+//  1- 4	"RIFF"				Marks the file as a riff file. Characters are each 1 byte long.
+//  5- 8	File size (integer)	Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you'd fill this in after creation.
+//  9-12	"WAVE"				File Type Header. For our purposes, it always equals "WAVE".
+// 13-16	"fmt "				Format chunk marker. Includes trailing null
+// 17-20	16					Length of format data as listed above
+// 21-22	1					Type of format (1 is PCM) - 2 byte integer
+// 23-24	2					Number of Channels - 2 byte integer
+// 25-28	44100				Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz.
+// 29-32	176400				(Sample Rate * BitsPerSample * Channels) / 8.
+// 33-34	4					(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
+// 35-36	16					Bits per sample
+// 37-40	"data"				"data" chunk header. Marks the beginning of the data section.
+// 41-44	File size (data)	Size of the data section.
+
+/* play audiofile using NAudio
+using NAudio;
+using NAudio.Wave;
+
+IWavePlayer waveOutDevice = new WaveOut();
+AudioFileReader audioFileReader = new AudioFileReader("file.mp3");
+waveOutDevice.Init(audioFileReader);
+waveOutDevice.Play();
+
+waveOutDevice.Stop();
+audioFileReader.Dispose();
+waveOutDevice.Dispose();
+*/

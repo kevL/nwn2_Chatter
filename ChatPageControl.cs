@@ -47,6 +47,16 @@ namespace nwn2_Chatter
 		/// The fixed height of rows.
 		/// </summary>
 		const int ROWHEIGHT = 20;
+
+		/// <summary>
+		/// Tracks the last directory for
+		/// <list type="bullet">
+		/// <item><c><see cref="click_it_browse()">click_it_browse()</see></c></item>
+		/// <item><c><see cref="click_it_play()">click_it_play()</see></c></item>
+		/// </list>
+		/// </summary>
+		/// <remarks>The path is written to "config.cfg" when Chatter closes.</remarks>
+		internal static string _lastbrowsedirectory;
 		#endregion Fields (static)
 
 
@@ -817,7 +827,6 @@ namespace nwn2_Chatter
 		}
 
 
-		static string _lastbrowsedirectory;
 		/// <summary>
 		/// 
 		/// </summary>
@@ -950,7 +959,7 @@ namespace nwn2_Chatter
 					_lastbrowsedirectory = Path.GetDirectoryName(ofd.FileName);
 
 					string audiofile = AudioConverter.deterwave(ofd.FileName); // this/these file/s will be deleted when Chatter closes
-					if (audiofile.Length != 0)
+					if (audiofile != null)
 					{
 						using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
 						using (var player = new System.Media.SoundPlayer(fs))

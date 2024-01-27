@@ -75,11 +75,9 @@ should appear at the right of the table.
 ----
 CREDITS
 
-Included in this Chatter package is a LAME 3.100 executable for decoding
-MPEG-audio layer 3 (MP3) to PCM-audio (WAV) playback.
-
-Chatter uses a parsed down version of NAudio for decoding ADPCM wavefiles to
-PCM-audio (WAV) playback. See the sourcecode for licensing and attribution.
+Chatter uses a parsed down version of NAudio for decoding BMU/MP3 and ADPCM
+audiofiles to PCM-audio (WAV) playback. See the sourcecode for licensing and
+attribution.
 
 Chatter uses a parsed down version of SharpZipLib for decompressing zipped files
 in Neverwinter Nights 2's installation/Data folder. See the sourcecode for

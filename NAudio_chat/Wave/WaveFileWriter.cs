@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Text;
 
-using NAudio.Wave.SampleProviders;
 using NAudio.Utils;
+using NAudio.Wave.SampleProviders;
 
 namespace NAudio.Wave
 {
@@ -252,6 +252,7 @@ namespace NAudio.Wave
 		{
 			if (outStream.Length + count > UInt32.MaxValue)
 				throw new ArgumentException("WAV file too large", "count");
+
 			outStream.Write(buffer, offset, count);
 			dataChunkSize += count;
 		}
@@ -444,7 +445,6 @@ namespace NAudio.Wave
 				if (bitsPerSample != 0)
 				{
 					writer.Seek((int)factSampleCountPos, SeekOrigin.Begin);
-					
 					writer.Write((int)((dataChunkSize * 8) / bitsPerSample));
 				}
 			}

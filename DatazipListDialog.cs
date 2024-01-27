@@ -324,7 +324,7 @@ namespace nwn2_Chatter
 			File.WriteAllBytes(pfe, bytes);
 
 			string audiofile = AudioConverter.deterwave(pfe); // this/these file/s will be deleted when Chatter closes
-			if (audiofile.Length != 0)
+			if (audiofile != null)
 			{
 				using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
 				using (var player = new System.Media.SoundPlayer(fs))
