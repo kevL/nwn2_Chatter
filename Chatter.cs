@@ -58,6 +58,36 @@ namespace nwn2_Chatter
 		const string Conf_Path      = "path=";
 		const string Conf_Recent    = "recent=";
 		const string Conf_Talkdir   = "talkdir=";
+		const string Conf_Browsedir = "browsedir=";
+
+		/// <summary>
+		/// Tracks the last directory for
+		/// <c><see cref="talktable_click_load()">talktable_click_load()</see></c>.
+		/// </summary>
+		/// <remarks>The path is written to "config.cfg" when Chatter closes.</remarks>
+		string _lasttlkdirectory;
+
+		/// <summary>
+		/// Tracks the last directory for
+		/// <c><see cref="file_click_open()">file_click_open()</see></c>.
+		/// </summary>
+		string _lastopendirectory;
+
+		/// <summary>
+		/// Tracks the last directory for
+		/// <list type="bullet">
+		/// <item><c><see cref="file_click_opendatazip()">file_click_opendatazip()</see></c></item>
+		/// <item><c><see cref="ChatPageControl"/>.click_it_browsedatazip()</c></item>
+		/// <item><c><see cref="DatazipListDialog"/>.click_Load()</c></item>
+		/// </list>
+		/// </summary>
+		internal static string _lastdatadirectory;
+
+		/// <summary>
+		/// Tracks the last directory for
+		/// <c><see cref="file_click_saveas()">file_click_saveas()</see></c>.
+		/// </summary>
+		string _lastsavedirectory;
 		#endregion Fields (static)
 
 
@@ -177,6 +207,14 @@ namespace nwn2_Chatter
 								&& Directory.Exists(line))
 							{
 								_lasttlkdirectory = line;
+							}
+						}
+						else if (line.StartsWith(Conf_Browsedir, StringComparison.OrdinalIgnoreCase))
+						{
+							if ((line = line.Substring(Conf_Browsedir.Length).Trim()).Length != 0
+								&& Directory.Exists(line))
+							{
+								ChatPageControl._lastbrowsedirectory = line;
 							}
 						}
 					}
@@ -314,6 +352,9 @@ namespace nwn2_Chatter
 
 			if (Directory.Exists(_lasttlkdirectory))
 				sb.AppendLine(Conf_Talkdir + _lasttlkdirectory);
+
+			if (Directory.Exists(ChatPageControl._lastbrowsedirectory))
+				sb.AppendLine(Conf_Browsedir + ChatPageControl._lastbrowsedirectory);
 
 			if (sb.Length != 0)
 			{
@@ -514,7 +555,6 @@ namespace nwn2_Chatter
 			}
 		}
 
-		string _lastopendirectory;
 		/// <summary>
 		/// 
 		/// </summary>
@@ -550,7 +590,6 @@ namespace nwn2_Chatter
 			}
 		}
 
-		internal static string _lastdatadirectory;
 		/// <summary>
 		/// 
 		/// </summary>
@@ -710,7 +749,6 @@ namespace nwn2_Chatter
 			}
 		}
 
-		string _lastsavedirectory;
 		/// <summary>
 		/// 
 		/// </summary>
@@ -902,7 +940,6 @@ namespace nwn2_Chatter
 		}
 
 
-		string _lasttlkdirectory;
 		/// <summary>
 		/// 
 		/// </summary>
