@@ -57,9 +57,9 @@ namespace nwn2_Chatter
 			InitializeComponent();
 
 			if (_isresref = isresref)
-				Text = "input text";
+				Text = "input resref";
 			else
-				Text = "input integer";
+				Text = "input strref";
 
 			ClientSize = new Size(242, 24);
 			MinimumSize = new Size(Size.Width, Size.Height);
