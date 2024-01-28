@@ -1,5 +1,5 @@
 Chatter
-1.1.1.0 - 2024 january 26
+1.1.2.0 - 2024 january 27
 kevL's
 
 SoundSetFile (SSF) editor for Neverwinter Nights 2
@@ -31,10 +31,14 @@ file). A blank strref will be interpreted as -1 or no strref.
 -----------
 RESREF Slot
 
-LMB opens a text input box.
+[Ctrl]+leftclick opens a resref input box.
+[Shift]+leftclick opens a dialog to browse for and insert a resref.
+[Ctrl+Shift]+leftclick opens a dialog to browse for and open an NwN2 zipped data
+file, from which a resource (audio) can be played and, if desired, its resref
+inserted into the current slot.
 
-RMB opens a context menu with available actions:
-- input (text)
+rightclick opens a context menu with available actions:
+- input resref
 - cut
 - copy
 - paste
@@ -43,21 +47,15 @@ RMB opens a context menu with available actions:
 - browse /Data zipfile
 - browse and Play file
 
-LMB+[Ctrl] opens a dialog to browse for and insert a file.
-
-LMB+[Shift] opens a dialog to browse for and play an audiofile.
-
-RMB+[Ctrl] on a resref slot opens a dialog to browse to and open an NwN2 zipped
-data file, from which an audiofile can be played and, if desired, inserted into
-the current slot.
+[Ctrl]+rightclick opens a dialog to browse for and play a resource (audio).
 
 -----------
 STRREF Slot
 
-LMB opens an integer input box.
+[Ctrl]+leftclick opens a strref input box.
 
-RMB opens a context menu with available actions:
-- input (integer)
+rightclick opens a context menu with available actions:
+- input strref
 - cut
 - copy
 - paste

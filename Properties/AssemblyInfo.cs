@@ -13,16 +13,16 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("kevL")]
 [assembly: AssemblyProduct("Chatter")]
-[assembly: AssemblyCopyright("2024 january 26")]
+[assembly: AssemblyCopyright("2024 january 27")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
 //[assembly: Guid("")]
 
-[assembly: AssemblyVersion("1.1.1.0")]
-[assembly: AssemblyFileVersion("1.1.1.0")]
-[assembly: AssemblyInformationalVersion("1.1.1.0")]
+[assembly: AssemblyVersion("1.1.2.0")]
+[assembly: AssemblyFileVersion("1.1.2.0")]
+[assembly: AssemblyInformationalVersion("1.1.2.0")]
 
 //[assembly: System.CLSCompliant(true)]
 

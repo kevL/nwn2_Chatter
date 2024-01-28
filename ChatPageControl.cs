@@ -265,7 +265,7 @@ namespace nwn2_Chatter
 					if (r < _resrefs.Length)
 						_r = r; _isresref = true;
 				}
-				else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == Keys.None) // is Strref ->
+				else if ((ModifierKeys & Keys.Shift) == Keys.None) // is Strref ->
 				{
 					if (r < _strrefs.Length)
 						_r = r; _isstrref = true;
@@ -291,26 +291,26 @@ namespace nwn2_Chatter
 						switch (e.Button)
 						{
 							case MouseButtons.Left:
-								if (ModifierKeys == Keys.Shift) // browse and Play file ->
+								if (ModifierKeys == Keys.Control) // input resref ->
 								{
-									click_it_play(null, EventArgs.Empty);
+									click_it_input(null, EventArgs.Empty);
 								}
-								else if (ModifierKeys == Keys.Control) // browse for file ->
+								else if (ModifierKeys == Keys.Shift) // browse for file ->
 								{
 									click_it_browse(null, EventArgs.Empty);
 								}
-								else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == Keys.None) // input text ->
+								else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == (Keys.Control | Keys.Shift)) // browse /Data zipfile ->
 								{
-									click_it_input(null, EventArgs.Empty);
+									click_it_browsedatazip(null, EventArgs.Empty);
 								}
 								break;
 
 							case MouseButtons.Right:
 								if ((ModifierKeys & Keys.Shift) == Keys.None)
 								{
-									if (ModifierKeys == Keys.Control) // browse /Data zipfile ->
+									if (ModifierKeys == Keys.Control) // browse and Play file ->
 									{
-										click_it_browsedatazip(null, EventArgs.Empty);
+										click_it_play(null, EventArgs.Empty);
 									}
 									else // context ->
 									{
@@ -321,27 +321,25 @@ namespace nwn2_Chatter
 						}
 					}
 				}
-				else if ((ModifierKeys & (Keys.Control | Keys.Shift)) == Keys.None
+				else if ((ModifierKeys & Keys.Shift) == Keys.None
 					&& _isstrref && e.X > COLWIDTH0 + COLWIDTH1 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
 				{
 					if (_r < _strrefs.Length)
 					{
 						switch (e.Button)
 						{
-							case MouseButtons.Left: // input integer ->
-//								if (ModifierKeys == Keys.Control)
-//									TODO: browse Dialog.Tlk
-//								else // show Inputbox ->
+							case MouseButtons.Left: // input strref ->
+								if (ModifierKeys == Keys.Control)
+									click_it_input(null, EventArgs.Empty);
 
-								click_it_input(null, EventArgs.Empty);
+								// TODO: browse Dialog.Tlk
 								break;
 
 							case MouseButtons.Right: // context ->
-//								if (ModifierKeys == Keys.Control)
-//									TODO: browse Dialog.Tlk
-//								else // show Slotter ->
+								if ((ModifierKeys & Keys.Control) == Keys.None)
+									ShowSlotter();
 
-								ShowSlotter();
+								// TODO: browse Dialog.Tlk
 								break;
 						}
 					}
