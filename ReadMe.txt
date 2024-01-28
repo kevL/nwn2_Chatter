@@ -18,10 +18,10 @@ Chatter supports both SSF version 1.0 (16-char resref) and 1.1 (32-char resref)
 specifications.
 
 The data is laid out in a table with four cols:
-1. Voice
-2. Resref
-3. Strref
-4. Talk-entry
+1. Voice (static)
+2. Resref (editable)
+3. Strref (editable)
+4. Talk-entry in talktable per 3. Strref
 
 A resref shall be ASCII alphanumeric or underscore characters only, or blank. A
 strref shall be 0 or a positive integer less than 33,554,432 (0..16,777,215
@@ -29,7 +29,7 @@ points into Dialog.Tlk while 16,777,216..33,554,431 points into a custom .Tlk
 file). A blank strref will be interpreted as -1 or no strref.
 
 -----------
-RESREF Slot
+RESREF Slots
 
 [Ctrl]+leftclick opens a resref input box.
 [Shift]+leftclick opens a dialog to browse for and insert a resref.
@@ -50,7 +50,7 @@ rightclick opens a context menu with available actions:
 [Ctrl]+rightclick opens a dialog to browse for and play a resource (audio).
 
 -----------
-STRREF Slot
+STRREF Slots
 
 [Ctrl]+leftclick opens a strref input box.
 
