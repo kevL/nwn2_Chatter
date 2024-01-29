@@ -1,5 +1,5 @@
 Chatter
-1.1.2.0 - 2024 january 27
+1.2.0.0 - 2024 january 29
 kevL's
 
 SoundSetFile (SSF) editor for Neverwinter Nights 2
@@ -69,6 +69,16 @@ Playing audio likely works on Windows machines only.
 
 On the menu is an option to load a Talkfile - if loaded the text of any strrefs
 should appear at the right of the table.
+
+----
+Encode to BMU
+
+Under "encode" on the menubar is a tool that allows the user to encode (or
+re-encode) an audiofile to BMU/MP3. Input can be BMU/MP3 or Wave PCM (44.1 kHz
+16 bit mono) or ADPCM (44.1 kHz 4 bit mono). Output should be compatible with
+NwN Voice audio. I found several voicefiles that appear to be okay but throw an
+exception in the toolset when played - use this tool to fix them or to compress
+original audiofiles for NwN ...
 
 ----
 CREDITS
