@@ -45,6 +45,8 @@ namespace nwn2_Chatter
 		ToolStripMenuItem it_outputformat_extended;
 		ToolStripMenuItem it_talktable;
 		ToolStripMenuItem it_talktable_load;
+		ToolStripMenuItem it_encode;
+		ToolStripMenuItem it_encode_encode;
 
 		ToolStripLabel la_about;
 
@@ -92,6 +94,8 @@ namespace nwn2_Chatter
 			this.it_talktable = new System.Windows.Forms.ToolStripMenuItem();
 			this.it_talktable_load = new System.Windows.Forms.ToolStripMenuItem();
 			this.la_about = new System.Windows.Forms.ToolStripLabel();
+			this.it_encode = new System.Windows.Forms.ToolStripMenuItem();
+			this.it_encode_encode = new System.Windows.Forms.ToolStripMenuItem();
 			this.tc_pages = new nwn2_Chatter.TabPageControl();
 			this.ss_bot = new System.Windows.Forms.StatusStrip();
 			this.tssl_file = new System.Windows.Forms.ToolStripStatusLabel();
@@ -110,7 +114,8 @@ namespace nwn2_Chatter
 			this.it_file,
 			this.it_outputformat,
 			this.it_talktable,
-			this.la_about});
+			this.la_about,
+			this.it_encode});
 			this.menubar.Location = new System.Drawing.Point(0, 0);
 			this.menubar.Name = "menubar";
 			this.menubar.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
@@ -304,6 +309,23 @@ namespace nwn2_Chatter
 			this.la_about.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
 			this.la_about.Size = new System.Drawing.Size(40, 24);
 			this.la_about.Text = "about";
+			// 
+			// it_encode
+			// 
+			this.it_encode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.it_encode_encode});
+			this.it_encode.Name = "it_encode";
+			this.it_encode.Padding = new System.Windows.Forms.Padding(0);
+			this.it_encode.Size = new System.Drawing.Size(47, 24);
+			this.it_encode.Text = "encode";
+			// 
+			// it_encode_encode
+			// 
+			this.it_encode_encode.Name = "it_encode_encode";
+			this.it_encode_encode.Padding = new System.Windows.Forms.Padding(0);
+			this.it_encode_encode.Size = new System.Drawing.Size(152, 20);
+			this.it_encode_encode.Text = "Encode to BMU";
+			this.it_encode_encode.Click += new System.EventHandler(this.encode_click_encode);
 			// 
 			// tc_pages
 			// 

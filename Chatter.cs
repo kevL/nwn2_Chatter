@@ -59,6 +59,7 @@ namespace nwn2_Chatter
 		const string Conf_Recent    = "recent=";
 		const string Conf_Talkdir   = "talkdir=";
 		const string Conf_Browsedir = "browsedir=";
+		const string Conf_Encodedir = "encodedir=";
 
 		/// <summary>
 		/// Tracks the last directory for
@@ -88,6 +89,13 @@ namespace nwn2_Chatter
 		/// <c><see cref="file_click_saveas()">file_click_saveas()</see></c>.
 		/// </summary>
 		string _lastsavedirectory;
+
+		/// <summary>
+		/// Tracks the last directory for
+		/// <c><see cref="encode_click_encode()">encode_click_encode()</see></c>.
+		/// </summary>
+		/// <remarks>The path is written to "config.cfg" when Chatter closes.</remarks>
+		string _lastencodedirectory;
 		#endregion Fields (static)
 
 
@@ -215,6 +223,14 @@ namespace nwn2_Chatter
 								&& Directory.Exists(line))
 							{
 								ChatPageControl._lastbrowsedirectory = line;
+							}
+						}
+						else if (line.StartsWith(Conf_Encodedir, StringComparison.OrdinalIgnoreCase))
+						{
+							if ((line = line.Substring(Conf_Encodedir.Length).Trim()).Length != 0
+								&& Directory.Exists(line))
+							{
+								_lastencodedirectory = line;
 							}
 						}
 					}
@@ -355,6 +371,9 @@ namespace nwn2_Chatter
 
 			if (Directory.Exists(ChatPageControl._lastbrowsedirectory))
 				sb.AppendLine(Conf_Browsedir + ChatPageControl._lastbrowsedirectory);
+
+			if (Directory.Exists(_lastencodedirectory))
+				sb.AppendLine(Conf_Encodedir + _lastencodedirectory);
 
 			if (sb.Length != 0)
 			{
@@ -975,6 +994,40 @@ namespace nwn2_Chatter
 
 					if (tc_pages.SelectedTab != null)
 						(tc_pages.SelectedTab.Tag as ChatPageControl).Invalidate();
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void encode_click_encode(object sender, EventArgs e)
+		{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.AutoUpgradeEnabled = false;
+
+				ofd.Title  = "Open WAV or MP3/BMU file";
+				ofd.Filter = "WAV files (*.WAV)|*.WAV|MP3 files (*.MP3)|*.MP3|BMU files (*.BMU)|*.BMU|All files (*.*)|*.*";
+
+				ofd.RestoreDirectory = true; // do not track this as last location
+
+				string dir;
+				if (Directory.Exists(_lastencodedirectory))
+					dir = _lastencodedirectory;
+				else
+					dir = GetCurrentDirectory();
+
+				ofd.FileName = Path.Combine(dir, "*.*");
+
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					_lastencodedirectory = Path.GetDirectoryName(ofd.FileName);
+
+					AudioConverter.EncodeVoiceFile(ofd.FileName);
 				}
 			}
 		}
