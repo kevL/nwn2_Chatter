@@ -165,6 +165,8 @@ namespace nwn2_Chatter
 					   + an.Version.Revision;
 #if DEBUG
 			ver += ".d";
+#else
+			ver += ".r";
 #endif
 			la_about.Text = ver;
 
@@ -1010,8 +1012,8 @@ namespace nwn2_Chatter
 			{
 				ofd.AutoUpgradeEnabled = false;
 
-				ofd.Title  = "Open WAV or MP3/BMU file";
-				ofd.Filter = "WAV files (*.WAV)|*.WAV|MP3 files (*.MP3)|*.MP3|BMU files (*.BMU)|*.BMU|All files (*.*)|*.*";
+				ofd.Title  = "Open WAV or BMU/MP3 file";
+				ofd.Filter = "WAV files (*.WAV)|*.WAV|BMU files (*.BMU)|*.BMU|MP3 files (*.MP3)|*.MP3|All files (*.*)|*.*";
 
 				ofd.RestoreDirectory = true; // do not track this as last location
 
