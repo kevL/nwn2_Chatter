@@ -80,6 +80,10 @@ NwN Voice audio. I found several voicefiles that appear to be okay but throw an
 exception in the toolset when played - use this tool to fix them or to compress
 original audiofiles for NwN ...
 
+The output file will be written to the same directory as the input file, with
+incremental digits appended to the filename if necessary to prevent overwriting
+an already existing file.
+
 ----
 CREDITS
 
