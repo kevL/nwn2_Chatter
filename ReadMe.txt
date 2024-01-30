@@ -65,7 +65,11 @@ rightclick opens a context menu with available actions:
 The edit functions use the Windows Clipboard. Paste will be disabled if the
 contents of the clipboard are invalid for the slot-type.
 
-Playing audio likely works on Windows machines only.
+Playing audio is supported only for a few standards of PCM-WAV, ADPCM, and
+BMU/MP3 formats and likely works on Windows machines only. Generally the
+standard should be 44.1 kHz 16 bit Mono; sample rate and bit depth for BMU/MP3
+is more relaxed but at present requires an MP3 decoder installed on your
+machine (usually there is one).
 
 On the menu is an option to load a Talkfile - if loaded the text of any strrefs
 should appear at the right of the table.
