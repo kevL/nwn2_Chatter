@@ -253,10 +253,10 @@ namespace nwn2_Chatter
 		{
 			_r = -1; _isresref = _isstrref = false;
 
-			if (!Chatter.BypassClicks
-				&& (ModifierKeys & Keys.Alt) == Keys.None
+			if ((ModifierKeys & Keys.Alt) == Keys.None
 				&& (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
 				&& e.X > COLWIDTH0 && e.X < COLWIDTH0 + COLWIDTH1 + COLWIDTH2)
+//				&& !Chatter.BypassClicks
 			{
 				int r = (e.Y + _scroller.Value) / ROWHEIGHT;
 

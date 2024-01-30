@@ -118,7 +118,7 @@ namespace nwn2_Chatter
 		/// </summary>
 		Timer _t1 = new Timer();
 
-		/// <summary>
+/*		/// <summary>
 		/// Mouseclicks on <c><see cref="ChatPageControl"/></c> will be disabled
 		/// when Chatter goes inactive. This is to prevent a mouseclick on the
 		/// Resref or Strref cols from opening an <c><see cref="Inputbox"/></c>
@@ -128,17 +128,17 @@ namespace nwn2_Chatter
 		/// and <c>false</c> in <c><see cref="OnActivated()">OnActivated()</see></c>
 		/// 25 ms after activation.
 		/// </summary>
-		Timer _t2 = new Timer();
+		Timer _t2 = new Timer(); */
 		#endregion Fields
 
 
-		#region Properties (static)
+/*		#region Properties (static)
 		/// <summary>
 		/// Tracks if a mouseclick is allowed wrt/ Activation state.
 		/// </summary>
 		internal static bool BypassClicks
 		{ get; private set; }
-		#endregion Properties (static)
+		#endregion Properties (static) */
 
 
 		#region cTor
@@ -175,8 +175,8 @@ namespace nwn2_Chatter
 			_t1.Interval = SystemInformation.DoubleClickTime + 15;
 			_t1.Tick += tick_t1;
 
-			_t2.Interval = 25;
-			_t2.Tick += tick_t2;
+//			_t2.Interval = 25;
+//			_t2.Tick += tick_t2;
 
 
 			string pfe = Path.Combine(Application.StartupPath, File_ConfigCfg);
@@ -416,7 +416,7 @@ namespace nwn2_Chatter
 		}
 
 
-		/// <summary>
+/*		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
@@ -452,7 +452,7 @@ namespace nwn2_Chatter
 		{
 			_t2.Stop();
 			BypassClicks = false;
-		}
+		} */
 		#endregion Handlers (override)
 
 
