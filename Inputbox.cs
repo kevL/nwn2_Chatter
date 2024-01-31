@@ -8,6 +8,13 @@ namespace nwn2_Chatter
 	sealed partial class Inputbox
 		: Form
 	{
+		enum TextChangedVerificationStep
+		{
+			non,	// dialog start
+			first,	// verify text after _t1 tick
+			user	// user is typing text
+		}
+
 		#region Fields (static)
 		static int _x = Int32.MinValue;
 		static int _y;
@@ -35,12 +42,22 @@ namespace nwn2_Chatter
 		int _len;
 
 		/// <summary>
+		/// Tracks the position of the caret for repositioning if an illegal
+		/// character is typed.
+		/// </summary>
+		int _pos;
+
+		/// <summary>
 		/// <c>true</c> if the input/output is a resref-string or <c>false</c>
 		/// if the input/output is a strref-uint.
 		/// </summary>
 		bool _isresref;
 
-		int _init;
+		/// <summary>
+		/// Tracks how text verification should be dealt with during the loading
+		/// sequence.
+		/// </summary>
+		TextChangedVerificationStep _init = TextChangedVerificationStep.non;
 
 		Timer _t1 = new Timer();
 		#endregion Fields
@@ -80,7 +97,7 @@ namespace nwn2_Chatter
 			tb_input.SelectionStart = tb_input.Text.Length;
 
 			_t1.Tick += t1_tick;
-			_t1.Interval = 100;
+			_t1.Interval = 80;
 			_t1.Start();
 		}
 		#endregion cTor
@@ -149,9 +166,9 @@ namespace nwn2_Chatter
 			_t1.Stop();
 			_t1.Dispose();
 
-			_init = 1;
+			_init = TextChangedVerificationStep.first;
 			textchanged_input(null, EventArgs.Empty);
-			_init = 2;
+			_init = TextChangedVerificationStep.user;
 		}
 
 		/// <summary>
@@ -161,7 +178,7 @@ namespace nwn2_Chatter
 		/// <param name="e"></param>
 		void textchanged_input(object sender, EventArgs e)
 		{
-			if (_init != 0)
+			if (_init != TextChangedVerificationStep.non)
 			{
 				if (_isresref)
 				{
@@ -175,10 +192,16 @@ namespace nwn2_Chatter
 							ib.ShowDialog(this);
 						}
 
-//						if (_init == 1) // TODO: remove non-alphanumeric+underscore chars
-//							tb_input.Text = ; // Recurse <-
-//						else
-						tb_input.Text = _pre; // Recurse <-
+						if (_init == TextChangedVerificationStep.first)
+						{
+							tb_input.Text = String.Empty; // Recurse <- sets '_pre' - TODO: remove non-alphanumeric+underscore chars
+						}
+						else
+						{
+							_pos = tb_input.SelectionStart; // store caret position
+							tb_input.Text = _pre; // Recurse <- sets '_pre'
+							tb_input.SelectionStart = _pos - 1; // reposition caret
+						}
 					}
 					else if (tb_input.Text.Length > _len)
 					{
@@ -190,16 +213,20 @@ namespace nwn2_Chatter
 							ib.ShowDialog(this);
 						}
 
-						if (_init == 1)
-							tb_input.Text = tb_input.Text.Substring(0, _len); // Recurse <-
+						if (_init == TextChangedVerificationStep.first)
+						{
+							tb_input.Text = tb_input.Text.Substring(0, _len); // Recurse <- sets '_pre'
+							tb_input.SelectionStart = tb_input.Text.Length;
+						}
 						else
-							tb_input.Text = _pre; // Recurse <-
+						{
+							_pos = tb_input.SelectionStart; // store caret position
+							tb_input.Text = _pre; // Recurse <- sets '_pre'
+							tb_input.SelectionStart = _pos - 1; // reposition caret
+						}
 					}
 					else
-					{
 						_pre = tb_input.Text;
-						tb_input.SelectionStart = _pre.Length;
-					}
 				}
 				else // is strref
 				{
@@ -213,7 +240,17 @@ namespace nwn2_Chatter
 						{
 							ib.ShowDialog(this);
 						}
-						tb_input.Text = _pre; // Recurse <-
+
+						if (_init == TextChangedVerificationStep.first)
+						{
+							tb_input.Text = String.Empty; // Recurse <- sets '_pre'
+						}
+						else
+						{
+							_pos = tb_input.SelectionStart; // store caret position
+							tb_input.Text = _pre; // Recurse <- sets '_pre'
+							tb_input.SelectionStart = _pos - 1; // reposition caret
+						}
 					}
 					else if (result > 0x01FFFFFF)
 					{
@@ -224,13 +261,20 @@ namespace nwn2_Chatter
 						{
 							ib.ShowDialog(this);
 						}
-						tb_input.Text = _pre; // Recurse <-
+
+						if (_init == TextChangedVerificationStep.first)
+						{
+							tb_input.Text = String.Empty; // Recurse <- sets '_pre'
+						}
+						else
+						{
+							_pos = tb_input.SelectionStart; // store caret position
+							tb_input.Text = _pre; // Recurse <- sets '_pre'
+							tb_input.SelectionStart = _pos - 1; // reposition caret
+						}
 					}
 					else
-					{
 						_pre = tb_input.Text;
-						tb_input.SelectionStart = _pre.Length;
-					}
 				}
 			}
 		}
