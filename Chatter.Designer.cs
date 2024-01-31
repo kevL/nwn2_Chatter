@@ -192,7 +192,7 @@ namespace nwn2_Chatter
 			this.it_file_opendatazip.Name = "it_file_opendatazip";
 			this.it_file_opendatazip.Padding = new System.Windows.Forms.Padding(0);
 			this.it_file_opendatazip.Size = new System.Drawing.Size(168, 20);
-			this.it_file_opendatazip.Text = "Open nwn2 data ...";
+			this.it_file_opendatazip.Text = "Open nwn2 /Data zip ...";
 			this.it_file_opendatazip.Click += new System.EventHandler(this.file_click_opendatazip);
 			// 
 			// it_file_save
@@ -317,14 +317,14 @@ namespace nwn2_Chatter
 			this.it_encode.Name = "it_encode";
 			this.it_encode.Padding = new System.Windows.Forms.Padding(0);
 			this.it_encode.Size = new System.Drawing.Size(47, 24);
-			this.it_encode.Text = "encode";
+			this.it_encode.Text = "encoder";
 			// 
 			// it_encode_encode
 			// 
 			this.it_encode_encode.Name = "it_encode_encode";
 			this.it_encode_encode.Padding = new System.Windows.Forms.Padding(0);
 			this.it_encode_encode.Size = new System.Drawing.Size(152, 20);
-			this.it_encode_encode.Text = "Encode to BMU";
+			this.it_encode_encode.Text = "Encode to BMU ...";
 			this.it_encode_encode.Click += new System.EventHandler(this.encode_click_encode);
 			// 
 			// tc_pages

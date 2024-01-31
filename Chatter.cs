@@ -129,6 +129,13 @@ namespace nwn2_Chatter
 		/// 25 ms after activation.
 		/// </summary>
 		Timer _t2 = new Timer(); */
+
+
+				 const string FileFilter_SSF = "SSF files (*.SSF)|*.SSF|All files (*.*)|*.*";
+		internal const string FileFilter_ZIP = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
+				 const string FileFilter_TLK = "TLK files (*.TLK)|*.TLK|All files (*.*)|*.*";
+		internal const string FileFilter_WAV = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
+		internal const string FileFilter_WBM = "WAV files (*.WAV)|*.WAV|BMU files (*.BMU)|*.BMU|MP3 files (*.MP3)|*.MP3|All files (*.*)|*.*";
 		#endregion Fields
 
 
@@ -588,7 +595,7 @@ namespace nwn2_Chatter
 				ofd.AutoUpgradeEnabled = false;
 
 				ofd.Title  = "Open SSF file";
-				ofd.Filter = "SSF files (*.SSF)|*.SSF|All files (*.*)|*.*";
+				ofd.Filter = FileFilter_SSF;
 
 //				ofd.RestoreDirectory = true; // allow tracking as last location
 
@@ -624,8 +631,8 @@ namespace nwn2_Chatter
 			{
 				ofd.AutoUpgradeEnabled = false;
 
-				ofd.Title  = "Open nwn2 /data file";
-				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
+				ofd.Title  = "Open nwn2 /Data zip";
+				ofd.Filter = FileFilter_ZIP;
 
 //				ofd.RestoreDirectory = true; // allow tracking as last location
 
@@ -788,7 +795,7 @@ namespace nwn2_Chatter
 				sfd.AutoUpgradeEnabled = false;
 
 				sfd.Title  = "Save as ...";
-				sfd.Filter = "SSF files (*.SSF)|*.SSF|All files (*.*)|*.*";
+				sfd.Filter = FileFilter_SSF;
 
 //				sfd.RestoreDirectory = true; // allow tracking as last location
 
@@ -973,7 +980,7 @@ namespace nwn2_Chatter
 				ofd.AutoUpgradeEnabled = false;
 
 				ofd.Title  = "Open TLK file";
-				ofd.Filter = "TLK files (*.TLK)|*.TLK|All files (*.*)|*.*";
+				ofd.Filter = FileFilter_TLK;
 
 				ofd.RestoreDirectory = true; // do not track this as last location
 
@@ -1013,7 +1020,7 @@ namespace nwn2_Chatter
 				ofd.AutoUpgradeEnabled = false;
 
 				ofd.Title  = "Open WAV or BMU/MP3 file";
-				ofd.Filter = "WAV files (*.WAV)|*.WAV|BMU files (*.BMU)|*.BMU|MP3 files (*.MP3)|*.MP3|All files (*.*)|*.*";
+				ofd.Filter = FileFilter_WBM;
 
 				ofd.RestoreDirectory = true; // do not track this as last location
 

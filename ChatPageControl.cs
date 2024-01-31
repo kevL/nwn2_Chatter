@@ -597,6 +597,7 @@ namespace nwn2_Chatter
 			_slotter.ShowImageMargin = false;
 
 			it_input = new ToolStripMenuItem();
+			it_input.ShortcutKeyDisplayString = "[Ctrl]+LMB";
 			it_input.Click += click_it_input;
 
 			var sep0 = new ToolStripSeparator();
@@ -620,17 +621,20 @@ namespace nwn2_Chatter
 			var sep1 = new ToolStripSeparator();
 
 			it_browse = new ToolStripMenuItem();
-			it_browse.Text = "browse for file";
+			it_browse.Text = "browse for file ...";
+			it_browse.ShortcutKeyDisplayString = "[Shift]+LMB";
 			it_browse.Click += click_it_browse;
 
 			it_browsedatazip = new ToolStripMenuItem();
-			it_browsedatazip.Text = "browse /Data zipfile";
+			it_browsedatazip.Text = "browse /Data zips ...";
+			it_browsedatazip.ShortcutKeyDisplayString = "[Ctrl+Shift]+LMB";
 			it_browsedatazip.Click += click_it_browsedatazip;
 
 			var sep2 = new ToolStripSeparator();
 
 			it_play = new ToolStripMenuItem();
-			it_play.Text = "browse and Play file";
+			it_play.Text = "Play file ...";
+			it_play.ShortcutKeyDisplayString = "[Ctrl]+RMB";
 			it_play.Click += click_it_play;
 
 			_slotter.Items.AddRange(new ToolStripItem[]
@@ -841,7 +845,7 @@ namespace nwn2_Chatter
 				ofd.AutoUpgradeEnabled = false;
 
 				ofd.Title  = "Select " + Chatter.Voices[_r] + " resref";
-				ofd.Filter = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
+				ofd.Filter = Chatter.FileFilter_WAV;
 
 				ofd.RestoreDirectory = true; // do not track this as last location
 
@@ -883,8 +887,8 @@ namespace nwn2_Chatter
 			{
 				ofd.AutoUpgradeEnabled = false;
 
-				ofd.Title  = "Open nwn2 /data for " + Chatter.Voices[_r];
-				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
+				ofd.Title  = "Open nwn2 /Data zip for " + Chatter.Voices[_r];
+				ofd.Filter = Chatter.FileFilter_ZIP;
 
 				ofd.RestoreDirectory = true; // do not track this as last location
 
@@ -940,7 +944,7 @@ namespace nwn2_Chatter
 				ofd.AutoUpgradeEnabled = false;
 
 				ofd.Title  = "Play a voice file";
-				ofd.Filter = "WAV files (*.WAV)|*.WAV|All files (*.*)|*.*";
+				ofd.Filter = Chatter.FileFilter_WBM;
 
 				ofd.RestoreDirectory = true; // do not track this as last location
 

@@ -249,7 +249,7 @@ namespace nwn2_Chatter
 				ofd.AutoUpgradeEnabled = false;
 
 				ofd.Title  = "Open nwn2 /data file";
-				ofd.Filter = "ZIP files (*.ZIP)|*.ZIP|All files (*.*)|*.*";
+				ofd.Filter = Chatter.FileFilter_ZIP;
 
 //				ofd.RestoreDirectory = true; // allow tracking as last location
 
