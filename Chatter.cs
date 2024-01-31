@@ -821,7 +821,7 @@ namespace nwn2_Chatter
 				{
 					_lastsavedirectory = Path.GetDirectoryName(sfd.FileName);
 
-					tc_pages.SelectedTab.Text = Path.GetFileName(chatter._pfe = sfd.FileName);
+					tc_pages.SelectedTab.Text = Path.GetFileNameWithoutExtension(chatter._pfe = sfd.FileName);
 					chatter._datazipfile = false;
 
 					file_click_save(sender, e);
