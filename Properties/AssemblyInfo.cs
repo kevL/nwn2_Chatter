@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("kevL")]
 [assembly: AssemblyProduct("Chatter")]
-[assembly: AssemblyCopyright("2024 january 30")]
+[assembly: AssemblyCopyright("2024 january 31")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
