@@ -1350,8 +1350,8 @@ namespace nwn2_Chatter
 		/// to the currently selected <c>ChatPageControl</c> - default
 		/// <c>true</c> but can be set <c>false</c> by
 		/// <c><see cref="OnFormClosing()">OnFormClosing()</see></c></param>
-		/// <returns><c>true</c> if <paramref name="chatter"/> is not considered
-		/// to be changed</returns>
+		/// <returns><c>true</c> if <paramref name="chatter"/> is considered to
+		/// be changed</returns>
 		bool ischanged(ChatPageControl chatter, bool selected = true)
 		{
 			return chatter.Changed
