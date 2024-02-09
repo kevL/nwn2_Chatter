@@ -63,6 +63,7 @@ namespace NAudio.Wave
 				Position += offset;
 			else
 				Position = Length + offset;
+
 			return Position;
 		}
 
@@ -118,7 +119,7 @@ namespace NAudio.Wave
 			}
 			set
 			{
-				Position = (long) (value.TotalSeconds * WaveFormat.AverageBytesPerSecond);
+				Position = (long)(value.TotalSeconds * WaveFormat.AverageBytesPerSecond);
 			}
 		}
 
@@ -129,7 +130,7 @@ namespace NAudio.Wave
 		{
 			get
 			{
-				return TimeSpan.FromSeconds((double) Length / WaveFormat.AverageBytesPerSecond);
+				return TimeSpan.FromSeconds((double)Length / WaveFormat.AverageBytesPerSecond);
 			}
 		}
 

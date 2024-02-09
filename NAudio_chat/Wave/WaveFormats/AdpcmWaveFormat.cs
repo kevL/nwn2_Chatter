@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace NAudio.Wave
 {
 	/// <summary>
-	/// Microsoft ADPCM
+	/// Microsoft ADPCM.
 	/// See http://icculus.org/SDL_sound/downloads/external_documentation/wavecomp.htm
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -19,14 +19,14 @@ namespace NAudio.Wave
 		short[] coefficients;
 
 		/// <summary>
-		/// Empty constructor needed for marshalling from a pointer
+		/// Empty constructor needed for marshalling from a pointer.
 		/// </summary>
 		AdpcmWaveFormat()
 			: this(8000, 1)
 		{}
 
 		/// <summary>
-		/// Samples per block
+		/// Samples per block.
 		/// </summary>
 		public int SamplesPerBlock
 		{
@@ -34,7 +34,7 @@ namespace NAudio.Wave
 		}
 
 		/// <summary>
-		/// Number of coefficients
+		/// Number of coefficients.
 		/// </summary>
 		public int NumCoefficients
 		{
@@ -42,7 +42,7 @@ namespace NAudio.Wave
 		}
 
 		/// <summary>
-		/// Coefficients
+		/// Coefficients.
 		/// </summary>
 		public short[] Coefficients
 		{
@@ -50,7 +50,7 @@ namespace NAudio.Wave
 		}
 
 		/// <summary>
-		/// Microsoft ADPCM
+		/// Microsoft ADPCM.
 		/// </summary>
 		/// <param name="sampleRate">Sample Rate</param>
 		/// <param name="channels">Channels</param>
@@ -67,10 +67,12 @@ namespace NAudio.Wave
 				case 11025:
 					blockAlign = 256;
 					break;
+
 				case 22050:
 					blockAlign = 512;
 					break;
-				case 44100:
+
+//				case 44100:
 				default:
 					blockAlign = 1024;
 					break;
@@ -82,16 +84,15 @@ namespace NAudio.Wave
 
 			// samplesPerBlock = blockAlign - (7 * channels)) * (2 / channels) + 2;
 
-
 			numCoeff = 7;
-			coefficients = new short[14]
+			coefficients = new short[] // 14 entries
 			{
 				256,0,512,-256,0,0,192,64,240,0,460,-208,392,-232
 			};
 		}
 
 		/// <summary>
-		/// Serializes this wave format
+		/// Serializes this WaveFormat.
 		/// </summary>
 		/// <param name="writer">Binary writer</param>
 		public override void Serialize(BinaryWriter writer)
@@ -106,7 +107,7 @@ namespace NAudio.Wave
 		}
 
 		/// <summary>
-		/// String Description of this WaveFormat
+		/// String Description of this WaveFormat.
 		/// </summary>
 		public override string ToString()
 		{
