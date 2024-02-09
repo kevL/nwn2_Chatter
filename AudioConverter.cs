@@ -10,6 +10,27 @@ namespace nwn2_Chatter
 {
 	static class AudioConverter
 	{
+		#region enums
+		/// <summary>
+		/// Errorcodes for
+		/// <c><see cref="DecodeVoiceFile()">DecodeVoiceFile()</see></c>.
+		/// </summary>
+		enum Fail
+		{
+			non,					// 0
+			Delete_TemporaryMP3,	// 1
+			Create_IntermediateMP3,	// 2
+			Delete_TemporaryPCM,	// 3
+			Create_ConvertedPCM,	// 4
+			Config_InvalidPCM,		// 5
+			Delete_FinalPCM,		// 6
+			Create_FinalPCM,		// 7
+			Config_InvalidADPCM,	// 8
+			Format_InvalidPCM		// 9
+		}
+		#endregion enums
+
+
 		#region fields (static)
 		const string EXT_BMU = ".bmu";
 		const string EXT_MP3 = ".mp3";
@@ -19,15 +40,24 @@ namespace nwn2_Chatter
 		internal const string TEMP_WAV = "nwn2_Chatter" + EXT_WAV;
 
 		const string LAME_EXE = "lame.exe";
+
+		// http://icculus.org/SDL_sound/downloads/external_documentation/wavecomp.htm
+		// NAudio appears to respect the Microsoft ADPCM format but the NwN2
+		// ADPCM files are Intel ... yet it works.
+//		const ushort WAVE_FORMAT_PCM       = 0x0001;
+//		const ushort WAVE_FORMAT_ADPCM     = 0x0002; // Microsoft corp.
+//		const ushort WAVE_FORMAT_DVI_ADPCM = 0x0011; // Intel corp. = WAVE_FORMAT_IMA_ADPCM
 		#endregion fields (static)
 
 
 		#region methods (static)
 		/// <summary>
-		/// 
+		/// Encodes a file to BMU/MP3 - converts it from PCM-Wave or ADPCM or
+		/// even back from a BMU/MP3. Note that input formats/configs are very
+		/// limited.
 		/// </summary>
 		/// <param name="pfe">path_file_extension</param>
-		/// <returns></returns>
+		/// <remarks>The result shall be BMU/MP3 44.1kHz 16-bit Mono.</remarks>
 		internal static void EncodeVoiceFile(string pfe)
 		{
 			string pfe0 = pfe;
@@ -55,7 +85,7 @@ namespace nwn2_Chatter
 										 br.ReadBytes(6);	// start 28
 						short bits     = br.ReadInt16();	// start 34: is 16-bit
 
-						if (format == (short)1)
+						if (format == (short)WaveFormatEncoding.Pcm)
 						{
 							// TODO: Sample-rate and bit-depth should probably be relaxed.
 							if (channels == (short)1
@@ -66,11 +96,11 @@ namespace nwn2_Chatter
 							}
 							else
 							{
-								error("PCM format shall be 44.1 kHz 16 bits mono");
+								error("PCM config shall be 44.1 kHz 16 bits mono [1]");
 								return;
 							}
 						}
-						else if (format == (short)17) // ADPCM -> windows won't play this natively.
+						else if (format == (short)WaveFormatEncoding.DviAdpcm) // ADPCM -> windows won't play this natively.
 						{
 							// TODO: Sample-rate should probably be relaxed.
 							if (channels == (short)1
@@ -79,6 +109,12 @@ namespace nwn2_Chatter
 							{
 								pfeT = Path.Combine(path, TEMP_WAV);
 								File.Delete(pfeT);
+
+								if (File.Exists(pfeT))
+								{
+									error("failed to delete the intermediate PCM file [2]");
+									return;
+								}
 
 								using (var reader = new WaveFileReader(pfe))
 								using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
@@ -89,19 +125,19 @@ namespace nwn2_Chatter
 
 								if (!File.Exists(pfeT))
 								{
-									error("failed to create an intermediate PCM file");
+									error("failed to create an intermediate PCM file [3]");
 									return;
 								}
 							}
 							else
 							{
-								error("ADPCM format shall be 44.1 kHz 4 bits mono");
+								error("ADPCM config shall be 44.1 kHz 4 bits mono [4]");
 								return;
 							}
 						}
 						else
 						{
-							error("unsupported Wave format");
+							error("unsupported Wave format [5]");
 							return;
 						}
 					}
@@ -131,7 +167,20 @@ namespace nwn2_Chatter
 					string pfeT = Path.Combine(path, TEMP_MP3); // so label it as .MP3 and allow the next block to catch it.
 					File.Delete(pfeT);
 
+					if (File.Exists(pfeT))
+					{
+						error("failed to delete the intermediate MP3 file [6]");
+						return;
+					}
+
 					File.Copy(pfe, pfeT);
+
+					if (!File.Exists(pfeT))
+					{
+						error("failed to copy the intermediate MP3 file [7]");
+						return;
+					}
+
 					pfe = pfeT;
 				}
 			}
@@ -140,6 +189,12 @@ namespace nwn2_Chatter
 			{
 				string pfeT = Path.Combine(path, TEMP_WAV);
 				File.Delete(pfeT);
+
+				if (File.Exists(pfeT))
+				{
+					error("failed to delete the intermediate PCM file [8]");
+					return;
+				}
 
 				// Convert MP3 file to WAV using Lame executable
 //				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
@@ -164,7 +219,7 @@ namespace nwn2_Chatter
 					WritePcmToBmu(pfeT, pfe0);
 				}
 				else
-					error("failed to create an intermediate PCM file");
+					error("failed to create an intermediate PCM file [9]");
 			}
 		}
 
@@ -234,9 +289,9 @@ namespace nwn2_Chatter
 		}
 
 		/// <summary>
-		/// 
+		/// Pops an <c><see cref="Infobox"/></c> if encoding fails.
 		/// </summary>
-		/// <param name="copyable"></param>
+		/// <param name="copyable">error details</param>
 		static void error(string copyable)
 		{
 			using (var ib = new Infobox(Infobox.Title_error,
@@ -250,20 +305,24 @@ namespace nwn2_Chatter
 
 
 		/// <summary>
-		/// Determines the file to play - converts it from BMU/MP3 or ADPCM to
-		/// a PCM wavefile if necessary.
+		/// Decodes the file to play - converts it from BMU/MP3 or ADPCM to a
+		/// PCM-Wave file if necessary.
 		/// </summary>
 		/// <param name="pfe">path_file_extension</param>
-		/// <returns>the fullpath to a PCM-wave file else a blank-string</returns>
-		/// <remarks>The result shall be PCM 44.1kHz 16-bit Mono.</remarks>
-		internal static string deterwave(string pfe)
+		/// <returns>the fullpath to a PCM-Wave file else <c>null</c></returns>
+		/// <remarks>The result shall be PCM-Wave 44.1kHz 16-bit Mono.</remarks>
+		internal static string DecodeVoiceFile(string pfe)
 		{
-			//logfile.Log("AudioConverter.deterwave() pfe= " + pfe);
+			//logfile.Log("AudioConverter.DecodeVoiceFile() pfe= " + pfe);
+
+			string audiofile = null;
 
 			string info_pfe = pfe;
 
 			bool info_BMU = false;
 			bool info_MP3 = false;
+
+			Fail fail = Fail.non;
 
 			string path = Path.GetTempPath();
 
@@ -286,37 +345,63 @@ namespace nwn2_Chatter
 					string pfeT = Path.Combine(path, TEMP_MP3); // so label it as .MP3 and allow the next block to catch it.
 					File.Delete(pfeT);
 
-					File.Copy(pfe, pfeT);
-					pfe = pfeT;
+					if (File.Exists(pfeT))
+					{
+						fail = Fail.Delete_TemporaryMP3;
+					}
+					else
+					{
+						File.Copy(pfe, pfeT);
+
+						if (File.Exists(pfeT))
+						{
+							pfe = pfeT;
+						}
+						else
+							fail = Fail.Create_IntermediateMP3;
+					}
 				}
 			}
 
-			if (pfe.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
+			if (fail == Fail.non
+				&& pfe.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
 				info_MP3 = !info_BMU;
 
 				string pfeT = Path.Combine(path, TEMP_WAV);
 				File.Delete(pfeT);
 
-				// Convert MP3 file to WAV using Lame executable
-//				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
-//				info.Arguments = "--decode \"" + pfe + "\" \"" + pfeT + "\"";
-//				info.WindowStyle = ProcessWindowStyle.Hidden;
-//				info.UseShellExecute = false;
-//				info.CreateNoWindow  = true;
-//				using (Process proc = Process.Start(info))
-//					proc.WaitForExit();
-
-				// Convert MP3 file to WAV using NAudio classes only
-				// note: My reading indicates this relies on an OS-installed MP3-decoder.
-				using (var reader = new Mp3FileReader(pfe))
-				using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
-				using (var output = new WaveFormatConversionStream(new WaveFormat(44100, input.WaveFormat.Channels), input))
+				if (File.Exists(pfeT))
 				{
-					WaveFileWriter.CreateWaveFile(pfeT, output); // bingo.
+					fail = Fail.Delete_TemporaryPCM;
 				}
+				else
+				{
+					// Convert MP3 file to WAV using Lame executable
+//					var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
+//					info.Arguments = "--decode \"" + pfe + "\" \"" + pfeT + "\"";
+//					info.WindowStyle = ProcessWindowStyle.Hidden;
+//					info.UseShellExecute = false;
+//					info.CreateNoWindow  = true;
+//					using (Process proc = Process.Start(info))
+//						proc.WaitForExit();
 
-				pfe = pfeT;
+					// Convert MP3 file to WAV using NAudio classes only
+					// note: My reading indicates this relies on an OS-installed MP3-decoder.
+					using (var reader = new Mp3FileReader(pfe))
+					using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
+					using (var output = new WaveFormatConversionStream(new WaveFormat(44100, input.WaveFormat.Channels), input))
+					{
+						WaveFileWriter.CreateWaveFile(pfeT, output); // bingo.
+					}
+
+					if (File.Exists(pfeT))
+					{
+						pfe = pfeT;
+					}
+					else
+						fail = Fail.Create_ConvertedPCM;
+				}
 			}
 
 
@@ -328,11 +413,11 @@ namespace nwn2_Chatter
 			short bits     = -1;
 
 
-			string audiofile = null;
-
-			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
+			if (fail == Fail.non
+				&& pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
 				//logfile.Log(". pfe= " + pfe);
+
 				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read)) // TODO: Exception handling <-
 				using (var br = new BinaryReader(fs))
 				{
@@ -357,7 +442,7 @@ namespace nwn2_Chatter
 						//logfile.Log(". . rate= " + rate);
 						//logfile.Log(". . bits= " + bits);
 
-						if (format == (short)1)
+						if (format == (short)WaveFormatEncoding.Pcm)
 						{
 							info_PCM = !info_BMU && !info_PCM;
 
@@ -368,8 +453,10 @@ namespace nwn2_Chatter
 							{
 								audiofile = pfe;
 							}
+							else
+								fail = Fail.Config_InvalidPCM;
 						}
-						else if (format == (short)17) // ADPCM -> windows won't play this natively.
+						else if (format == (short)WaveFormatEncoding.DviAdpcm) // ADPCM -> windows won't play this natively.
 						{
 							info_ADPCM = true;
 
@@ -381,15 +468,32 @@ namespace nwn2_Chatter
 								string pfeT = Path.Combine(path, TEMP_WAV);
 								File.Delete(pfeT);
 
-								using (var reader = new WaveFileReader(pfe))
-								using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
-								using (var output = new WaveFormatConversionStream(new WaveFormat(44100, input.WaveFormat.Channels), input))
+								if (File.Exists(pfeT))
 								{
-									WaveFileWriter.CreateWaveFile(pfeT, output); // bingo.
+									fail = Fail.Delete_FinalPCM;
 								}
-								audiofile = pfeT;
+								else
+								{
+									using (var reader = new WaveFileReader(pfe))
+									using (var input  =     WaveFormatConversionStream.CreatePcmStream(reader))
+									using (var output = new WaveFormatConversionStream(new WaveFormat(44100, input.WaveFormat.Channels), input))
+									{
+										WaveFileWriter.CreateWaveFile(pfeT, output); // bingo.
+									}
+
+									if (File.Exists(pfeT))
+									{
+										audiofile = pfeT;
+									}
+									else
+										fail = Fail.Create_FinalPCM;
+								}
 							}
+							else
+								fail = Fail.Config_InvalidADPCM;
 						}
+						else
+							fail = Fail.Format_InvalidPCM;
 					}
 				}
 			}
@@ -397,7 +501,8 @@ namespace nwn2_Chatter
 			//logfile.Log("audiofile= " + audiofile);
 			if (audiofile == null)
 			{
-				string copyable = "input" + Environment.NewLine
+				string copyable = "errorcode " + (int)fail + Environment.NewLine + Environment.NewLine
+								+ "input" + Environment.NewLine
 								+ info_pfe + Environment.NewLine
 								+ (info_BMU ? "BMU" : (info_MP3 ? "MP3" : (info_PCM ? "PCM" : (info_ADPCM ? "ADPCM" : "unknown")))) + Environment.NewLine
 								+ "channels " + (channels != -1 ? channels.ToString() : "unknown") + Environment.NewLine

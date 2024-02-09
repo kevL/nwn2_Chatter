@@ -323,7 +323,7 @@ namespace nwn2_Chatter
 			string pfe = Path.Combine(Path.GetTempPath(), Path.GetFileName(zipentry.Label));
 			File.WriteAllBytes(pfe, bytes);
 
-			string audiofile = AudioConverter.deterwave(pfe); // this/these file/s will be deleted when Chatter closes
+			string audiofile = AudioConverter.DecodeVoiceFile(pfe); // this/these file/s will be deleted when Chatter closes
 			if (audiofile != null)
 			{
 				using (var fs = new FileStream(audiofile, FileMode.Open, FileAccess.Read, FileShare.Read))
