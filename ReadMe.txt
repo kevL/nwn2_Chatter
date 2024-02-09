@@ -94,7 +94,12 @@ CREDITS
 Chatter uses a parsed down version of NAudio for decoding BMU/MP3 and ADPCM
 audiofiles to PCM-audio (WAV) playback. See the sourcecode for licensing and
 attribution.
+https://github.com/naudio/NAudio
+
+Chatter includes the Lame executable for encoding audio to BMU/MP3.
+https://lame.sourceforge.io/
 
 Chatter uses a parsed down version of SharpZipLib for decompressing zipped files
 in Neverwinter Nights 2's installation/Data folder. See the sourcecode for
 licensing and attribution.
+https://github.com/icsharpcode/SharpZipLib
